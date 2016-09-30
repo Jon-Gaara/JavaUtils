@@ -30,7 +30,7 @@ public class FileCompressionFor7z {
 	 * @param newFilePath 新文件路径
 	 * @throws Exception 
 	 */
-	public void lzmaZip(String fileName,String newFilePath) throws Exception{
+	public static void lzmaZip(String fileName,String newFilePath) throws Exception{
 		File file = new File(fileName);
 		File newFile = new File(newFilePath);
 		BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
@@ -48,7 +48,8 @@ public class FileCompressionFor7z {
 		};
 		encoder.Code(inStream, outStream, -1, -1, null);
 	}
-	public void lzmaZip2(String fileName,String newFilePath) throws Exception{
+	
+	public static void lzmaZip2(String fileName,String newFilePath) throws Exception{
 		File file = new File(fileName);
 		File newFile = new File(newFilePath);
 		BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
@@ -80,7 +81,7 @@ public class FileCompressionFor7z {
 	 * @param filePath 源文件
 	 * @param newFilePath 新文件路径
 	 */
-	public void unzipFor7z(String filePath,final String newFilePath){
+	public static void unzipFor7z(String filePath,final String newFilePath){
 		RandomAccessFile randomAccessFile = null;
 		IInArchive inArchive = null;
 		try {
@@ -148,16 +149,6 @@ public class FileCompressionFor7z {
 					System.err.println("Error closing file: " + e);
 				}
 			}
-		}
-	}
-	public static void main(String[] args){
-		FileCompressionFor7z fileCom = new FileCompressionFor7z();
-		try{
-			//fileCom.lzmaZip("d:\\111.jpg","d:\\111.7z");
-			//fileCom.lzmaZip2("d:\\111.7z","d:\\111.jpg");
-			//fileCom.unzipFor7z("D:\\111.7z","d:\\111.jpg");
-		}catch(Exception e){
-			e.printStackTrace();
 		}
 	}
 }

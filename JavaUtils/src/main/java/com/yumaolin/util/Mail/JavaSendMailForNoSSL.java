@@ -101,13 +101,4 @@ public class JavaSendMailForNoSSL {
    	    logger.error(e.getMessage());
    	}
        }
-    public static void main(String[] args) {
- 	File file = new File("d:\\111.jpg");
-	File file2 = new File("d:\\222.jpg");
- 	String body = "测试邮件<br/><img src='cid:"+file.getName()+"'><br/>";
- 	System.out.println(body);
- 	JavaSendMailForSSL.sendMail("测试邮件!",body,new File[]{file2},new File[]{file});
- 	System.out.println("发送邮件成功!");
-     }
-
 }

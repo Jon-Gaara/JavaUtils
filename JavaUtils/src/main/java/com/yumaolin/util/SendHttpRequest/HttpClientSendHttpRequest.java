@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.http.HttpEntity;
@@ -31,8 +32,8 @@ public class HttpClientSendHttpRequest {
 	private static String requestEncoding = "UTF-8";//请求编码
 	
 	 /** 
-     * post方式提交表单（模拟用户登录请求） 
-     */  
+	  * post方式提交表单（模拟用户登录请求） 
+	  */  
 	public static String sendPostForm(String url,Map<String,String> param){
 		//创建默认的HttpClient实例
 		CloseableHttpClient httpClient = HttpClients.createDefault();
@@ -59,7 +60,8 @@ public class HttpClientSendHttpRequest {
 			CloseableHttpResponse response = httpClient.execute(httpPost);
 			try{
 				System.out.println(response.getStatusLine().getStatusCode());
-					HttpEntity entity = response.getEntity();
+				if(response.getStatusLine().getStatusCode()==200){
+				    HttpEntity entity = response.getEntity();
 					if(entity!=null){
 						entityStr = EntityUtils.toString(entity,requestEncoding);
 						System.out.println("----------------------------------");
@@ -67,6 +69,8 @@ public class HttpClientSendHttpRequest {
 						System.out.println("----------------------------------");
 						return entityStr;
 					}
+				}
+				
 			}finally{
 				response.close();
 			}
@@ -104,11 +108,11 @@ public class HttpClientSendHttpRequest {
 				HttpEntity entity = response.getEntity();
 				System.out.println("-------------------------------");
 				System.out.println(response.getStatusLine().getStatusCode());
-				if(entity!=null){
-					// 打印响应内容长度    
-                    System.out.println("Response content length: " + entity.getContentLength());  
-                    // 打印响应内容    
-                    System.out.println("Response content: " + EntityUtils.toString(entity));  
+				if(response.getStatusLine().getStatusCode()==200){
+				    // 打印响应内容长度    
+				    System.out.println("Response content length: " + entity.getContentLength());  
+				    // 打印响应内容    
+				    System.out.println("Response content: " + EntityUtils.toString(entity));  
 				}
 				 System.out.println("------------------------------------");  
 			}finally{
@@ -130,13 +134,34 @@ public class HttpClientSendHttpRequest {
 	/**
 	 *上传文件 
 	 */
-	public void SendHttpUploadFile(String url,String file){
+	public static void SendHttpUploadFile(String url,Map<File,String> files,Map<String,String> textValue){
 		CloseableHttpClient httpClient = HttpClients.createDefault();
 		try{
 			HttpPost httpPost = new HttpPost(url);
-			FileBody  bin = new FileBody(new File(file));
-			StringBody comment = new StringBody("A binary file of some kind", ContentType.TEXT_PLAIN);
-			HttpEntity entity  = MultipartEntityBuilder.create().addPart("bin",bin).addPart("comment",comment).build();
+			MultipartEntityBuilder muitipart = MultipartEntityBuilder.create();
+			
+			//HttpEntity entity  = MultipartEntityBuilder.create().addPart("bin",bin).addPart("comment",comment).build();
+			/**
+			 * 文件上传
+			 */
+			for(Entry<File,String> fileSet :files.entrySet()){
+			    String setKey = fileSet.getValue();
+			    File setValue = fileSet.getKey();
+			    FileBody  bin = new FileBody(setValue);
+			    muitipart.addPart(setKey, bin);
+			    StringBody comment = new StringBody("A binary file of some kind", ContentType.DEFAULT_BINARY);
+			    muitipart.addPart("comment", comment);
+			}
+			
+			/**
+			 * 属性上传
+			 */
+			for(Entry<String, String> textSet :textValue.entrySet()){
+			    muitipart.addTextBody(textSet.getKey(),textSet.getValue());
+			}
+			
+			
+			HttpEntity entity  = muitipart.build();
 			httpPost.setEntity(entity);
 			System.out.println("executing request "+httpPost.getRequestLine());
 			CloseableHttpResponse response = httpClient.execute(httpPost);  
@@ -144,7 +169,7 @@ public class HttpClientSendHttpRequest {
 		    	System.out.println("------------------------------");
 		    	System.out.println(response.getStatusLine());
 		    	HttpEntity resEntity  = response.getEntity();
-		    	if(resEntity!=null){
+		    	if(response.getStatusLine().getStatusCode()==200){
 		    		System.out.println("Response content length: " +resEntity.getContentLength());
 		    	}
 		    	 EntityUtils.consume(resEntity);
@@ -156,10 +181,18 @@ public class HttpClientSendHttpRequest {
 		}
 	}
 	public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-		String str = sendGet("http://api.avatardata.cn/MD5/Decode","key=17433d3c279041bb99f11f8cbc30dc11&md5=ad44680182ece4de467d6a7b91ea5463");
+		/*String str = sendGet("http://api.avatardata.cn/MD5/Decode","key=17433d3c279041bb99f11f8cbc30dc11&md5=ad44680182ece4de467d6a7b91ea5463");
 		//String str = sendGet("http://apis.haoservice.com/creditop/IcQuery/QueryEntBaseInfo","entName=440310809147096&key=5ab4dbe042b44a51b33c02ccfecb0182");
 		System.out.println(str);
 		//440310809147096,430223197607296926
-		Map<String,String> param = new HashMap<String,String>();
+		Map<String,String> param = new HashMap<String,String>();*/
+	    Map<File,String> fileMap = new HashMap<File,String>();
+	    fileMap.put(new File("d:\\111.jpg"),"pic");
+	    fileMap.put(new File("d:\\222.jpg"),"pic");
+	    fileMap.put(new File("d:\\123123.png"),"pic");
+	    
+	    Map<String,String> textMap = new HashMap<String,String>();
+	    textMap.put("showId","10001");
+	    HttpClientSendHttpRequest.SendHttpUploadFile("http://192.168.0.136/api/showorder/shareImage.action",fileMap,textMap);
 	}
 }

@@ -36,8 +36,7 @@ public class JavaApiSendHttpRequest {
 		URLConnection urlConnection = realUrl.openConnection();//打开和URL直接的连接
 		urlConnection.setRequestProperty("accept", "*/*");//设置通用属性
 		urlConnection.setRequestProperty("connection", "Keep-Alive");
-		urlConnection.setRequestProperty("user-agent", 
-					  "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 1.5; SV1)");
+		urlConnection.setRequestProperty("user-agent", "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 1.5; SV1)");
 		urlConnection.setRequestProperty("apikey", apiKey);
 		urlConnection.setReadTimeout(readTimeout);
 		urlConnection.setConnectTimeout(connectionTimeout);
@@ -76,8 +75,7 @@ public class JavaApiSendHttpRequest {
 		HttpURLConnection connection  = (HttpURLConnection) readerUrl.openConnection();
 		connection.setRequestProperty("accept", "*/*");
 		connection.setRequestProperty("connection", "Keep-Alive");
-		connection.setRequestProperty("user-agent",
-                 "Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1");
+		connection.setRequestProperty("user-agent","Mozilla/5.0 (Windows NT 6.1; rv:2.0.1) Gecko/20100101 Firefox/4.0.1");
 		connection.setRequestProperty("apikey", apiKey);
 		connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 		connection.setInstanceFollowRedirects(true);
@@ -129,8 +127,7 @@ public class JavaApiSendHttpRequest {
 		  HttpURLConnection connection = (HttpURLConnection) url.openConnection();
 		  	connection.setRequestProperty("accept", "*/*");
 			connection.setRequestProperty("connection", "Keep-Alive");
-			connection.setRequestProperty("user-agent",
-	                 "Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
+			connection.setRequestProperty("user-agent","Mozilla/4.0 (compatible; MSIE 6.0; Windows NT 5.1;SV1)");
 			connection.setRequestProperty("apikey", apiKey);
 			connection.setRequestProperty("Content-Type","application/x-www-form-urlencoded");
 			connection.setRequestProperty("Accept-Charset", "UTF-8");
@@ -145,13 +142,13 @@ public class JavaApiSendHttpRequest {
 			connection.connect();
 			InputStream is = connection.getInputStream();
 			buffer = new BufferedReader(new InputStreamReader(is,"UTF-8"));
-		    String strRead = null;
-		    while ((strRead = buffer.readLine()) != null) {
-		         sbf.append(strRead);
-		         sbf.append("\r\n");
-		    }
-		    buffer.close();
-		    result =ascii2native(sbf.toString());
+			String strRead = null;
+			while ((strRead = buffer.readLine()) != null) {
+			    sbf.append(strRead);
+			    sbf.append("\r\n");
+			}
+			buffer.close();
+			result =ascii2native(sbf.toString());
 	  }catch(Exception e){
 		  e.printStackTrace();
 	  }
@@ -159,10 +156,10 @@ public class JavaApiSendHttpRequest {
   } 
   
   public static void main(String[] args) throws Exception{
-	  //String url = sendGet("http://apis.baidu.com/apistore/weatherservice/cityname","cityname=深圳","1fe02d93e72a22bc6474235054d42125");
-	  // System.out.println(url);111.jpg
-	  //parseJson(url);
-	  File file = new File("d://111.jpg");
+	  /*String url = sendGet("http://apis.baidu.com/apistore/weatherservice/cityname","cityname=深圳","1fe02d93e72a22bc6474235054d42125");
+	  System.out.println(url);
+	  parseJson(url);*/
+	 /* File file = new File("d://111.jpg");
 	  FileInputStream fileInput = new FileInputStream(file);
 	  FileOutputStream fileout = new FileOutputStream("d://222.jpg");
           String result =null;
@@ -174,8 +171,9 @@ public class JavaApiSendHttpRequest {
           fileout.write(Base64Encryption.decode(result));
           fileout.close();
 	  String url=SendHttpUploadFile("http://apis.baidu.com/image_search/shitu/shitu_image",result,"1fe02d93e72a22bc6474235054d42125");
-	  System.out.println(url);
+	  System.out.println(url);*/
   }
+  
   private static String ascii2native (String asciicode)
   {
       String[] asciis = asciicode.split ("\\\\u");

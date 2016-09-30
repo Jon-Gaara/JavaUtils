@@ -57,7 +57,4 @@ public class MD5Encryption {
         }
         return md5str;
     }
-    public static void main(String[] args) {
-    	System.out.println(getMD5("yml","MD5","gbk"));
-    }
 }
