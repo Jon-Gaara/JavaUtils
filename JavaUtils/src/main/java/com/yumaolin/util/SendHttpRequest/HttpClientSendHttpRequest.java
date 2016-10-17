@@ -181,11 +181,11 @@ public class HttpClientSendHttpRequest {
 		}
 	}
 	public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-		/*String str = sendGet("http://api.avatardata.cn/MD5/Decode","key=17433d3c279041bb99f11f8cbc30dc11&md5=ad44680182ece4de467d6a7b91ea5463");
+		String str = sendGet("http://api.avatardata.cn/MD5/Decode","key=17433d3c279041bb99f11f8cbc30dc11&md5=ad44680182ece4de467d6a7b91ea5463");
 		//String str = sendGet("http://apis.haoservice.com/creditop/IcQuery/QueryEntBaseInfo","entName=440310809147096&key=5ab4dbe042b44a51b33c02ccfecb0182");
 		System.out.println(str);
 		//440310809147096,430223197607296926
-		Map<String,String> param = new HashMap<String,String>();*/
+		Map<String,String> param = new HashMap<String,String>();
 	    Map<File,String> fileMap = new HashMap<File,String>();
 	    fileMap.put(new File("d:\\111.jpg"),"pic");
 	    fileMap.put(new File("d:\\222.jpg"),"pic");
@@ -194,5 +194,10 @@ public class HttpClientSendHttpRequest {
 	    Map<String,String> textMap = new HashMap<String,String>();
 	    textMap.put("showId","10001");
 	    HttpClientSendHttpRequest.SendHttpUploadFile("http://192.168.0.136/api/showorder/shareImage.action",fileMap,textMap);
+	    Map<String,String> map = new HashMap<String,String>();
+	    map.put("sign",new String("".getBytes("utf-8"),"gbk"));
+	    map.put("value",new String("一易购".getBytes("gbk"),"gbk"));
+	    map.put("goods",new String("一易购".getBytes("gbk"),"utf-8"));
+	    HttpClientSendHttpRequest.sendPostForm("http://localhost/tfbPay/appNotify.action", map);
 	}
 }

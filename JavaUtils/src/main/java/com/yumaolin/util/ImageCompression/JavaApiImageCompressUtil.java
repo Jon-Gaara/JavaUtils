@@ -25,8 +25,9 @@ import javax.imageio.ImageIO;
 /**
  * 图片处理工具类：<br>
  * 功能：缩放图像、切割图像、图像类型转换、彩色转黑白、文字水印、图片水印等
+ * http://blog.csdn.net/cenlop/article/details/75184 使用JAI扩展
  */
-public class ImageCompressUtil {
+public class JavaApiImageCompressUtil {
     /**
      * 几种常见的图片格式
      */
@@ -492,10 +493,10 @@ public class ImageCompressUtil {
 //     * @param args
 //     */
    public static void main(String[] args) {
-	   ImageCompressUtil ImageUtil = new ImageCompressUtil();
+	   JavaApiImageCompressUtil ImageUtil = new JavaApiImageCompressUtil();
 //        // 1-缩放图像：
 //        // 方法一：按比例缩放
-       ImageUtil.scale("d:/222.jpg", "d:/222_scale.jpg", 2, false);//测试OK
+       //ImageUtil.scale("d:/1476412539888.png", "d:/1476412539888_scale.png",2, false);//测试OK
 //        // 方法二：按高度和宽度缩放
 //        ImageUtil.scale2("e:/abc.jpg", "e:/abc_scale2.jpg", 500, 300, true);//测试OK
 //        // 2-切割图像：

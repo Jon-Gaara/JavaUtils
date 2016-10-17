@@ -7,18 +7,12 @@ import java.util.Map;
 
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
-import org.apache.poi.xssf.usermodel.XSSFCell;
-import org.apache.poi.xssf.usermodel.XSSFCellStyle;
 
 
 public class SetExcelValue {
 	/**
 	 * 设置单元格的值2
-	 * @throws NoSuchMethodException 
-	 * @throws SecurityException 
-	 * @throws InvocationTargetException 
-	 * @throws IllegalAccessException 
-	 * @throws IllegalArgumentException 
+	 * 
 	 */
 	public static void setTheCellValue(CellStyleControl styleFactory,Cell cell , int index, Object object, CellConfig config) throws SecurityException, NoSuchMethodException, IllegalArgumentException, IllegalAccessException, InvocationTargetException {
 		if("index".equals(config.getColName())) {

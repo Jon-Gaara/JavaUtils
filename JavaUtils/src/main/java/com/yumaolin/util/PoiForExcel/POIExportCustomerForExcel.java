@@ -60,6 +60,7 @@ public class POIExportCustomerForExcel {
 		v_index += 1;
 		return v_index;
 	}
+	
 	/**
 	 * 创建明细项标题
 	 * @param configs

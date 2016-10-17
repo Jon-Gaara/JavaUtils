@@ -2,7 +2,6 @@ package com.yumaolin.util.Mail;
 
 import java.io.File;
 import java.io.UnsupportedEncodingException;
-import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
 

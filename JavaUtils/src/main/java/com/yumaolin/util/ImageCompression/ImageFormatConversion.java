@@ -13,12 +13,13 @@ import javax.imageio.stream.ImageInputStream;
 
 /**
  * http://www.360doc.com/content/14/0418/09/14416931_369953357.shtml
+ * 接口文档:http://jai-imageio.github.io/jai-imageio-core/javadoc/
  * jai 图片格式转换  jai-imageio-core-1.3.1.jar
- * 支持的图片格式:bmp,clib,gif,jpeg,pcx,png,pnm(PBM,PGM,PPM),raw,tiff,wbmp
+ * 支持的图片格式:bmp,clib,gif,jpeg,pcx,png,pnm(PBM,PGM,PPM),raw,tiff,wbmp,jpeg2000,jpeg-ls
+ * 
+ * 其他 开源api TwelveMonkeys：https://github.com/haraldk/TwelveMonkeys
  */
 public class ImageFormatConversion {
-	public ImageFormatConversion() {
-	}
     public static void imageFormat(String fileName,OutputStream out,String fileType,String formatFileType) throws Exception{
     	File file2 = new File(fileName);
 		FileInputStream fis = new FileInputStream(file2);

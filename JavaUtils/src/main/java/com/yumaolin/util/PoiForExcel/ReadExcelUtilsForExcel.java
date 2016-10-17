@@ -8,11 +8,7 @@ import java.io.PushbackInputStream;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.apache.poi.POIXMLDocument;
@@ -40,14 +36,16 @@ public class ReadExcelUtilsForExcel {
 		this.wb = wb;
 	}
 
-	public  List<Map<Integer, String>> readExcelContent(){
-		List<Map<Integer, String>> content = new ArrayList<Map<Integer,String>>();
+	public  String[][] readExcelContent(){
+	    	String[][] content;
 		sheet = wb.getSheetAt(0);
 		// 得到总行数
 		int rowNum = sheet.getLastRowNum();
 		row = sheet.getRow(1);
 		//int colNum = row.getPhysicalNumberOfCells();
 		int colNum = row.getLastCellNum();
+		content = new String[rowNum+1][colNum];
+		System.out.println(content.length);
 		// 正文内容应该从第二行开始,第一行为表头的标题
 		for (int i = 0; i <= rowNum; i++){
 			row = sheet.getRow(i);
@@ -57,7 +55,6 @@ public class ReadExcelUtilsForExcel {
 			if(StringUtils.isEmpty(getCellFormatValue(row.getCell(0)))){//如果某行第一列出现空 就不读取这行
 				continue;
 			}
-			Map<Integer,String> map = new HashMap<Integer,String>();
 			int j = 0;
 			while (j < colNum){
 				// 每个单元格的数据内容用"-"分割开，以后需要时用String类的replace()方法还原数据
@@ -67,10 +64,9 @@ public class ReadExcelUtilsForExcel {
 				/*sbd.append(getCellFormatValue(row.getCell(j)).trim() == null
 						|| "".equals(getCellFormatValue(row.getCell(j)).trim()) ? nullStr
 						: getCellFormatValue(row.getCell(j)).trim() + SPLITF);*/
-				map.put(j, getCellFormatValue(row.getCell(j)));
-				j++;
+			    content[i][j]=getCellFormatValue(row.getCell(j));
+			    j++;
 			}
-			content.add(map);
 		}
 		setBorder = wb.createCellStyle();
 		font = wb.createFont();
@@ -149,7 +145,7 @@ public class ReadExcelUtilsForExcel {
 		setBorder.setFont(font);
 	}
 	public static void main(String[] args) throws Exception {
-		File file = new File("d:\\test11.xlsx");
+		File file = new File("d:\\交易明细信息.xls");
 		//File file = new File("d:\\主表.xls");
 		InputStream input = new FileInputStream(file);
 		if (!input.markSupported()) {
@@ -165,10 +161,10 @@ public class ReadExcelUtilsForExcel {
 				System.out.println("http://blog.csdn.net/lee_guang/article/details/8936178");
 			}else{
 				Workbook wb = new XSSFWorkbook(input);
-				List<Map<Integer,String>> list = new ReadExcelUtilsForExcel(wb).readExcelContent();
-				for(Map<Integer,String> map:list){
-					for(int i=0;i<map.size();i++){
-						String value = map.get(i);
+				String[][] list = new ReadExcelUtilsForExcel(wb).readExcelContent();
+				for(String[] map:list){
+					for(int i=0;i<map.length;i++){
+						String value = map[i];
 						System.out.print(value+"|");
 					}
 					System.out.println();
@@ -177,10 +173,10 @@ public class ReadExcelUtilsForExcel {
 		}else if(POIFSFileSystem.hasPOIFSHeader(input)){
 			POIFSFileSystem fs  = new POIFSFileSystem(input);
 			Workbook wb = new HSSFWorkbook(fs);
-			List<Map<Integer,String>> list = new ReadExcelUtilsForExcel(wb).readExcelContent();
-			for(Map<Integer,String> map:list){
-				for(int i=0;i<map.size();i++){
-					String value = map.get(i);
+			String[][] list = new ReadExcelUtilsForExcel(wb).readExcelContent();
+			for(String[]  map:list){
+				for(int i=0;i<map.length;i++){
+					String value = map[i];
 					System.out.print(value+"|");
 				}
 				System.out.println();
