@@ -10,6 +10,7 @@ import org.apache.poi.ss.usermodel.CellStyle;
 
 
 public class SetExcelValue {
+    
 	/**
 	 * 设置单元格的值2
 	 * 
@@ -21,7 +22,7 @@ public class SetExcelValue {
 		} else {
 			Object value = null;
 			if(object instanceof Map){
-				Map map = (Map) object;
+				Map<?, ?> map = (Map<?, ?>) object;
 				value = map.get(config.getFieldName().toUpperCase());
 			}else{
 				String methodName = config.getFieldName().substring(0, 1).toUpperCase().concat(config.getFieldName().substring(1));

@@ -19,7 +19,7 @@ public class ZipToolsForApache {
 	   zipFile = new File(pathName);
    }
    
-   private void fileCompress(String srcPathName){
+   public void fileCompress(String srcPathName){
 	   File file = new File(srcPathName);
 	   if(!file.exists()){
 		  throw new RuntimeException(srcPathName+"不存在");
@@ -35,6 +35,7 @@ public class ZipToolsForApache {
 		   e.printStackTrace();
 	   }
    }
+   
    private void fileCompress(File file,ZipOutputStream zipOut,String baseDir){
 	  if(file.isDirectory()){//判断是文件还是目录
 		  this.compressDirectory(file,zipOut,baseDir);
@@ -42,6 +43,7 @@ public class ZipToolsForApache {
 		  this.compressFile(file,zipOut,baseDir);
 	  }
    }
+   
    /**
     * 压缩目录
     */
@@ -50,11 +52,14 @@ public class ZipToolsForApache {
 		   return;
 	   }
 	   File[] files = file.listFiles();
-	   for(int i=0;i<files.length;i++){//递归
-		  //fileCompress(files[i],zipOut,baseDir+file.getName()+File.separator);带目录压缩
-		   fileCompress(files[i],zipOut,baseDir);//不带目录压缩
+	   if(files!=null && files.length>0){
+	       for(int i=0;i<files.length;i++){//递归
+			  //fileCompress(files[i],zipOut,baseDir+file.getName()+File.separator);带目录压缩
+			   fileCompress(files[i],zipOut,baseDir);//不带目录压缩
+		   }
 	   }
    }
+   
    /**
     * 压缩文件
     */

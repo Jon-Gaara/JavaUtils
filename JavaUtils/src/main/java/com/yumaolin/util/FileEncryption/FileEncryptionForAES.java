@@ -11,9 +11,6 @@ import javax.crypto.spec.SecretKeySpec;
 
 /**
  * AES文件加密
- * 
- * @author Administrator
- *
  */
 public class FileEncryptionForAES {
 
@@ -32,8 +29,7 @@ public class FileEncryptionForAES {
 		}
 
 		SecretKey secretKey = new SecretKeySpec(key, "AES");
-		IvParameterSpec iv = new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0,
-				0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
+		IvParameterSpec iv = new IvParameterSpec(new byte[] { 0, 0, 0, 0, 0, 0,0, 0, 0, 0, 0, 0, 0, 0, 0, 0 });
 		Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
 		cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
 		byte[] tgtBytes = cipher.doFinal(content);
@@ -71,8 +67,7 @@ public class FileEncryptionForAES {
 	 * @param plainFilePath  明文文件路径路径
 	 * @param secretFilePath 密文文件路径
 	 */
-	public static void encodeAESFile(byte[] key, String plainFilePath,
-			String secretFilePath) throws Exception {
+	public static void encodeAESFile(byte[] key, String plainFilePath,String secretFilePath) throws Exception {
 		FileInputStream fis = null;
 		ByteArrayOutputStream bos = null;
 		FileOutputStream fos = null;

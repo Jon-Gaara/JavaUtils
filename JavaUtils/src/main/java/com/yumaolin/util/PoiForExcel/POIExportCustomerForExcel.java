@@ -100,7 +100,7 @@ public class POIExportCustomerForExcel {
 					row.createCell(i);
 					try {
 						//样式
-						if(cellStylemap!=null && cellStylemap.get(configs.get(i).getCellType().toString())!=null){
+						if(cellStylemap.get(configs.get(i).getCellType().toString())!=null){
 							cellStyle = cellStylemap.get(configs.get(i).getCellType().toString());
 						}else{
 							cellStyle = styleFactory.getStyleByType(CellType.valueOf(configs.get(i).getCellType().toString()),cellStyle);

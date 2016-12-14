@@ -1,14 +1,16 @@
 package com.yumaolin.util.Test;
 
 import java.io.File;
-import java.io.UnsupportedEncodingException;
-import java.net.URLDecoder;
-import java.net.URLEncoder;
+import java.lang.reflect.InvocationHandler;
+import java.lang.reflect.Proxy;
+import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.GregorianCalendar;
+import java.util.Random;
 
+import javax.script.ScriptEngine;
+import javax.script.ScriptEngineManager;
+
+import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -29,7 +31,8 @@ import com.yumaolin.util.Mail.JavaSendMailForSSL;
  * 每一个测试方法的调用顺序为：
  *    @Before –> @Test –> @After
  */
-public class UtilTest {
+public class UtilTest{
+
     @Ignore
     public void SendMailForSSLTest(){
 	 File file = new File("d:\\111.jpg");
@@ -61,13 +64,81 @@ public class UtilTest {
      * StrictMath和Math区别
      * StrictMath使用"只有发布的Math库"(fdlibm)实现算法,以确保所有平台上得到相同的结果,性能比Math差
      */
-    @Test
-    public void  ProjectTest() throws NoSuchMethodException, SecurityException, UnsupportedEncodingException{
-	GregorianCalendar ca = new  GregorianCalendar();
-	int month = ca.get(Calendar.DAY_OF_YEAR);
-	int year = ca.get(Calendar.YEAR);
-	int werk = ca.get(Calendar.DAY_OF_WEEK)-1;
-	System.out.println(year+" "+month+" "+werk);
+    @Ignore
+    public void  ProjectTest() throws Exception{
+	/* EnumTest[] test= EnumTest.values();
+	 for(EnumTest enumTest:test){
+	    System.out.println("当前灯 name: "+enumTest.name());
+	    System.out.println("当前灯 ordinal : "+enumTest.ordinal());
+	    System.out.println("当前灯: " + enumTest);
+	 }*/
+	ArrayList<Integer> list = new ArrayList<Integer>();
+	for(int i=1;i<5;i++){list.add(i*i);}
+	System.out.println(new ObjectAnlyzer().toString(list));
+	int[] array = {5,8,6,9,0};
+	Arrays.sort(array);
+	System.out.println(Arrays.toString((int[])new ObjectAnlyzer().copyOf(array,10)));
     }
-  
+    
+    @Ignore
+    public void ProxyTest(){
+	Object[] elements = new Object[1000];
+	for(int i=0;i<elements.length;i++){
+	    Integer value = i+1;
+	    InvocationHandler handler = new TraceHandle(value);
+	    Object proxy = Proxy.newProxyInstance(null,new Class[]{Comparable.class},handler);
+	    elements[i]=proxy;
+	}
+	Integer key = new Random().nextInt(elements.length)-1;
+	int result = Arrays.binarySearch(elements, key);
+	if(result>=0)System.out.println(elements[result]);
+    }
+    
+    @Test
+    public void ThrowTest() throws Exception{
+	/*Path path =Paths.get("d:/","111.jpg");
+	if(Files.exists(path)){
+	    byte[] bytes = Files.readAllBytes(path);
+	    BasicFileAttributes bfa = Files.readAttributes(path,BasicFileAttributes.class);
+	    System.out.println(Files.exists(path));
+	    System.out.println(Arrays.toString(bytes));
+	}
+	IOReaderUtils.FileIterator(Paths.get("d:/home"));*/
+	ScriptEngineManager sem= new ScriptEngineManager();
+	ScriptEngine se = sem.getEngineByName("javascript");
+	se.eval("print(12312312)");
+	
+	StringBuilder query  = new StringBuilder();
+	query.append("SELECT t.UR_ID as urId,t.UR_USERID as urUserId,t.UR_LIMITED_AMOUNT as urLimitedAmount,t.UR_CARDID   as urCardId,");
+	query.append("t.UR_REAL_NAME as urRealName,t.UR_PHONE as urPhone,t.UR_EMAIL s urEmail,t.UR_BANK_CODE   as urBankCode,t.UR_BANKID  as urBankId,t.UR_BANK_NAME  as urBankName,");
+	query.append("t.UR_BANK_ACCOUNT   as urBankAccount,t.UR_AUTH_STATUS  as urAuthStatus,t.UR_CREATE_TIME  as urCreateTime,t.UR_PAY_PASSWORD as urPayPassword,t.UR_SURPLUS _AMOUNT   as urSurplusAmount,,tu.UAF_AUTH_REASON as uafAuthReason FROM ");
+	query.append("t_user_real t LEFT JOIN (select  a.UAF_USERID,a.UAF_AUTH_REASON,a.UAF_ID  from t_user_auth_flow as a ,");
+	query.append("(select max(tuaf.UAF_ID) as uafId from t_user_auth_flow as tuaf group by tuaf.UAF_USERID) as b ");
+	query.append("where a.UAF_ID=b.uafId)tu on t.UR_USERID = tu.UAF_USERID");
+	query.append(" order by  t.UR_CREATE_TIME desc ");
+	System.out.println(query.length());
+	System.out.println("/ADMIN_BACK/ZLYG/USERIDENTITIES/FINDUSERIDENTITIES".contains("/"));
+	//IOReaderUtils.ZipFileIterator(Paths.get("d:/222.zip"));
+	/*List<String> list  = new ArrayList<String>();
+	list.add("A");
+	list.add("B");
+	list.add("C");
+	list.add("D");
+	list.add("E");
+	list.add("F");
+	ListIterator<String> listIt = list.listIterator();
+	while(listIt.hasNext()){
+	    System.out.println(listIt.next());
+	}
+	System.out.println(Collections.max(list));
+	Collections.sort(list, Collections.reverseOrder());
+	System.out.println(list);
+	Collections.shuffle(list);
+	System.out.println(list);
+	Thread t = new Thread(()->System.out.println("123123"));
+	t.start();*/
+	//BufferedReader buf = new BufferedReader(new InputStreamReader(new FileInputStream(""),"utf-8"));
+	//System.out.print(System.getProperty("line.separator"));
+	//Logger.getLogger("com.yumaolin.util.Test.UtilTest").log(Level.INFO,"123123123",new IOException());
+   }
 }

@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:jee="http://www.springframework.org/schema/jee"
+	xmlns:tx="http://www.springframework.org/schema/tx" xmlns:context="http://www.springframework.org/schema/context"
+	xmlns:aop="http://www.springframework.org/schema/aop"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans 
+	http://www.springframework.org/schema/beans/spring-beans-4.0.xsd 
+	http://www.springframework.org/schema/tx 
+	http://www.springframework.org/schema/tx/spring-tx-4.0.xsd 
+	http://www.springframework.org/schema/jee 
+	http://www.springframework.org/schema/jee/spring-jee-4.0.xsd 
+	http://www.springframework.org/schema/context 
+	http://www.springframework.org/schema/context/spring-context-4.0.xsd 
+	http://www.springframework.org/schema/aop 
+    http://www.springframework.org/schema/aop/spring-aop-4.0.xsd" >
+	<!-- spring注解需要-->
+	<context:annotation-config />
+	<context:component-scan base-package="com.yumaolin.*" />
+	
+	<!--启用Spring对@AspectJ功能 -->
+	<aop:aspectj-autoproxy proxy-target-class="true" />
+	
+	<!-- 配置属性文件 -->
+	<bean id="propertyConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+		<property name="ignoreResourceNotFound" value="true" />
+		<property name="locations">
+			<list>
+				<value>classpath:jdbc.properties</value>
+				<value>classpath:thread.properties</value>
+			</list>
+		</property>
+	</bean>
+	
+	<!-- 用注解来实现事务管理 -->
+	<tx:annotation-driven transaction-manager="transactionManager" />
+	
+	<!-- 数据源配置 -->
+	<bean id="dataSource" class="com.mchange.v2.c3p0.ComboPooledDataSource"  destroy-method="close">
+		<property name="driverClass" value="${jdbc.driverClassName}" />
+		<property name="jdbcUrl" value="${jdbc.url}" />
+		<property name="user" value="${jdbc.username}" />
+		<property name="password" value="${jdbc.password}" />
+		<!-- 连接池配置 -->
+		<property name="acquireIncrement" value="${c3p0.acquireIncrement}"></property>
+		<property name="acquireRetryDelay" value="${c3p0.acquireRetryDelay}" />
+		<property name="autoCommitOnClose" value="${c3p0.autoCommitOnClose}"></property>
+		<property name="idleConnectionTestPeriod" value="${c3p0.idleConnectionTestPeriod}"></property>
+		<property name="maxIdleTimeExcessConnections" value="${c3p0.maxIdleTimeExcessConnections}"></property>
+		<property name="initialPoolSize" value="${c3p0.initialPoolSize}"></property>
+		<property name="maxIdleTime" value="${c3p0.maxIdleTime}"></property>
+		<property name="maxPoolSize" value="${c3p0.maxPoolSize}"></property>
+		<property name="numHelperThreads" value="${c3p0.numHelperThreads}"></property>
+		<property name="preferredTestQuery" value="${c3p0.preferredTestQuery}"></property>
+	</bean>
+	
+</beans>

@@ -14,11 +14,12 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 public class SFTPContext{
-	   private static String host ="1270.0.1";
+	   private static String host ="127.0.0.1";
 	    private static int port = 7393;
 	    private static String username = "fjrssc";
 	    private static String password = "1qaz@WSX#EDC";
 	    private static Session sshSession;
+	    
 	    /**
 	     * 连接sftp服务器
 	     */

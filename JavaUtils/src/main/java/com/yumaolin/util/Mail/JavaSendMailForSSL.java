@@ -25,7 +25,7 @@ import javax.mail.internet.MimeUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yumaolin.util.FileReader.PropertiesUtils;
+import com.yumaolin.util.FileResolve.PropertiesUtils;
 
 public class JavaSendMailForSSL {
     /**
@@ -50,6 +50,7 @@ public class JavaSendMailForSSL {
     
     public JavaSendMailForSSL() {}
     
+    @SuppressWarnings("restriction")
     public static void sendMail(String subject,String body,File[] attachment,File[] fileImage){
 	Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	Properties prop = System.getProperties();
@@ -60,12 +61,15 @@ public class JavaSendMailForSSL {
 	prop.setProperty("mail.smtp.socketFactory.port", port);
 	prop.setProperty("mail.smtp.auth","true");
 	Session session = Session.getInstance(prop);
+	//session.setDebug(true);//开启debug模式
 	Message message = new MimeMessage(session);
 	try {
 	    message.setFrom(new InternetAddress(userName));
 	  //指定收件人，多人时用逗号分隔
 	    InternetAddress[] tos = InternetAddress.parse(toMailAddress,false);
-    	    message.setRecipients(Message.RecipientType.TO,tos);
+    	    message.setRecipients(Message.RecipientType.TO,tos);//收件人
+    	    //message.setRecipients(Message.RecipientType.CC,tos);//抄送人
+    	    //message.setRecipients(Message.RecipientType.BCC,tos);//密送人
     	    message.setSubject(subject);
     	    Multipart multipart = new MimeMultipart(); //Multipart对象
     	    BodyPart bp = new MimeBodyPart();
@@ -78,7 +82,7 @@ public class JavaSendMailForSSL {
     		    MimeBodyPart bodyPart = new MimeBodyPart();
     		    DataSource source = new FileDataSource(imageFile);
     		    bodyPart.setDataHandler(new DataHandler(source));
-    		    System.out.println(imageFile.getName());
+    		    //System.out.println(imageFile.getName());
     		    bodyPart.setContentID(MimeUtility.encodeWord(imageFile.getName()));
     		    multipart.addBodyPart(bodyPart);
     		}
@@ -107,7 +111,7 @@ public class JavaSendMailForSSL {
     	    Transport transport = session.getTransport("smtp");//smtp验证，就是你用来发邮件的邮箱用户名密码
     	    //message.writeTo(new FileOutputStream("D:\\1.eml"));//保存本地测试 
             transport.connect(smtpHostName, userName, password);//发送
-           transport.sendMessage(message, message.getAllRecipients());
+            transport.sendMessage(message, message.getAllRecipients());
 	} catch (AddressException e) {
 	    logger.error(e.getMessage());
 	} catch (MessagingException e) {

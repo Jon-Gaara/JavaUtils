@@ -1,8 +1,5 @@
 package com.yumaolin.util.SendHttpRequest;
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -14,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.yumaolin.util.EncryptionAlgorithm.Base64Encryption;
+
 import net.sf.json.JSONObject;
 /**
  * Java自带Api发送HTTP请求
@@ -207,14 +205,14 @@ public class JavaApiSendHttpRequest {
 			if(errNum==0){
 				  	 JSONObject retData = jsonObject.getJSONObject("retData");
 					 String	city = (String) retData.get("city");//城市
-					 String	pinyin = (String) retData.get("pinyin");//城市拼音
-					 String	citycode = (String) retData.get("citycode");//城市编码
+					 //String pinyin = (String) retData.get("pinyin");//城市拼音
+					 //String citycode = (String) retData.get("citycode");//城市编码
 					 String	date = (String) retData.get("date");//日期
 					 String	time = (String) retData.get("time");//发布时间
-					 String	postCode = (String) retData.get("postCode");//邮编
-					 String	longitude =String.valueOf((Double) retData.get("longitude"));//经度
-					 String	latitude = String.valueOf((Double) retData.get("latitude"));//维度
-					 String	altitude = (String) retData.get("altitude");//海拔
+					 //String postCode = (String) retData.get("postCode");//邮编
+					 //String longitude =String.valueOf((Double) retData.get("longitude"));//经度
+					 //String latitude = String.valueOf((Double) retData.get("latitude"));//维度
+					 //String altitude = (String) retData.get("altitude");//海拔
 					 String	weather = (String) retData.get("weather");//天气情况
 					 String	temp = (String) retData.get("temp");//气温
 					 String	l_tmp = (String) retData.get("l_tmp");//最低气温

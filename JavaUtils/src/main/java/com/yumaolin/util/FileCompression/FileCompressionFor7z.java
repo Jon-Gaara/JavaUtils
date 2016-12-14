@@ -76,6 +76,7 @@ public class FileCompressionFor7z {
 		outStream.close();
 		inStream.close();
 	}
+	
 	/**
 	 * 7Z解压
 	 * @param filePath 源文件

@@ -44,11 +44,11 @@ public class FtpContext {
         int reply;
         try{
             // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
-        if(port==21){
-            ftpClient.connect(url);
-         }else{
-        	 ftpClient.connect(url, port);// 连接FTP服务器
-         }
+            if(port==21){
+                ftpClient.connect(url);
+             }else{
+            	 ftpClient.connect(url, port);// 连接FTP服务器
+             }
             // 登录
             ftpClient.login(username, password);
             ftpClient.setControlEncoding(encoding);
@@ -167,7 +167,7 @@ public class FtpContext {
             if(port==21){
             	ftpClient.connect(url);
             }else{
-            	ftpClient.connect(url, port);// 连接FTP服务器
+            	ftpClient.connect(url,port);// 连接FTP服务器
             }
             // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
             ftpClient.login(username, password);// 登录

@@ -4,6 +4,7 @@ package com.yumaolin.util.ImageCompression;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 
 import javax.imageio.ImageIO;
 
@@ -69,10 +70,10 @@ public class ThumbnailatorImageCompressUtil {
        
        int ImageWidth = image.getWidth();//图片真实的宽
        int ImageHeight = image.getHeight();//图片真实的高
-       float scale= (float)width/height;
-       float ImageScale = (float)ImageWidth/ImageHeight;
+       BigDecimal scale= new BigDecimal(width).divide(new BigDecimal(height));
+       BigDecimal ImageScale =new BigDecimal(ImageWidth).divide(new BigDecimal(ImageHeight));
        
-       if(scale!=ImageScale){
+       if(scale.equals(ImageScale)){
 	   if(ImageWidth>ImageHeight){
 	       image = Thumbnails.of(file).height(height).asBufferedImage();
 	   }else{

@@ -42,6 +42,7 @@ public class JavaApiFileCompressionForZIP {
 	 }
 	 return zipFile;
  }
+ 
  private void zipFile(File file,String basePath,ZipOutputStream zipOut) throws IOException{
 	 File[] files = null;
 	 if(file.isDirectory()){
@@ -55,6 +56,9 @@ public class JavaApiFileCompressionForZIP {
 	 byte[] buff = new byte[1024];
 	 int length=0;
 	 try{
+	     	 if(files==null){
+	     	    return; 
+	     	 }
 		 for(File newFile:files){
 			 if(newFile.isDirectory()){
 				 pathName = newFile.getPath().substring(basePath.length()+1)+File.separator;//不带目录压缩
@@ -67,9 +71,11 @@ public class JavaApiFileCompressionForZIP {
 				 BufferedInputStream buffer = new BufferedInputStream(is);
 				 //zipOut.putNextEntry(new ZipEntry(pathName));带目录压缩
 				 zipOut.putNextEntry(new ZipEntry(newFile.getName()));//不带目录压缩
-				 while((length = buffer.read(buff))!=-1){ 
+				 //zipOut.setLevel(9);设置zip压缩级别 0~9
+				 while((length = buffer.read(buff))!=-1){
 					 zipOut.write(buff,0,length);
 				 }
+				 buffer.close();
 			 }
 		 }
 	 }catch(Exception e){

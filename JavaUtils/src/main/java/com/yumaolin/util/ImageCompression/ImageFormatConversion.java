@@ -20,17 +20,18 @@ import javax.imageio.stream.ImageInputStream;
  * 其他 开源api TwelveMonkeys：https://github.com/haraldk/TwelveMonkeys
  */
 public class ImageFormatConversion {
+    
     public static void imageFormat(String fileName,OutputStream out,String fileType,String formatFileType) throws Exception{
     	File file2 = new File(fileName);
-		FileInputStream fis = new FileInputStream(file2);
-		Iterator readers = ImageIO.getImageReadersByFormatName(fileType);
-		ImageInputStream iis = ImageIO.createImageInputStream(fis);
-		while (readers.hasNext()){
-			ImageReader reader = (ImageReader)readers.next();
-			reader.setInput(iis,true);
-			BufferedImage buffer = reader.read(0);
-			ImageIO.write(buffer,formatFileType,out); 
-		}
+	FileInputStream fis = new FileInputStream(file2);
+	Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(fileType);
+	ImageInputStream iis = ImageIO.createImageInputStream(fis);
+	while (readers.hasNext()){
+		ImageReader reader = (ImageReader)readers.next();
+		reader.setInput(iis,true);
+		BufferedImage buffer = reader.read(0);
+		ImageIO.write(buffer,formatFileType,out); 
+	}
     }
     
     public static void main(String[] args) throws Exception {

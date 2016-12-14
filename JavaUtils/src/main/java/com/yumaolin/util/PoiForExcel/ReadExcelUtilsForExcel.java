@@ -26,11 +26,11 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 
 public class ReadExcelUtilsForExcel {
 	private Workbook wb;
-	private static Sheet sheet;
-	private static Row row;
-	private static CellStyle setBorder;
-	private static Font font;
-	private static long fileSize = 1024*1024*10;//10mb
+	private Sheet sheet;
+	private Row row;
+	private CellStyle setBorder;
+	private Font font;
+	private static final long fileSize = 1024*1024*10;//10mb
 	
 	public ReadExcelUtilsForExcel(Workbook wb){
 		this.wb = wb;
@@ -113,7 +113,7 @@ public class ReadExcelUtilsForExcel {
 		return cellvalue.trim();
 	}
 
-	public static void writeInTemplate(String newContent, int beginRow,int beginCell, boolean flag){
+	public void writeInTemplate(String newContent, int beginRow,int beginCell, boolean flag){
 		Row row = sheet.getRow(beginRow);
 		if (null == row) {
 			// 如果不做空判断，你必须让你的模板文件画好边框，beginRow和beginCell必须在边框最大值以内
@@ -133,7 +133,7 @@ public class ReadExcelUtilsForExcel {
 		cell.setCellValue(newContent);
 	}
 
-	public static void getHssfCellStyle(boolean flag) {
+	public void getHssfCellStyle(boolean flag) {
 		// cell.setCellStyle(styleFactory.getHeaderStyle());
 		font.setFontHeightInPoints((short) 12); // 字体高度
 		font.setBoldweight(Font.BOLDWEIGHT_BOLD);

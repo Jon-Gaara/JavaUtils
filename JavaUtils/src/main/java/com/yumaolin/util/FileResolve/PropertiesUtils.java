@@ -1,4 +1,4 @@
-package com.yumaolin.util.FileReader;
+package com.yumaolin.util.FileResolve;
 
 import java.util.Locale;
 import java.util.ResourceBundle;

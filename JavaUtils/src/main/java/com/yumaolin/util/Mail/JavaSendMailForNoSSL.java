@@ -24,7 +24,7 @@ import javax.mail.internet.MimeUtility;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import com.yumaolin.util.FileReader.PropertiesUtils;
+import com.yumaolin.util.FileResolve.PropertiesUtils;
 
 public class JavaSendMailForNoSSL {
     public JavaSendMailForNoSSL() {}
@@ -41,6 +41,7 @@ public class JavaSendMailForNoSSL {
    	//prop.setProperty("mail.smtp.port", port);//不传Port默认25
    	prop.setProperty("mail.smtp.auth","true");
    	Session session = Session.getInstance(prop);
+   	//session.setDebug(true);//开启debug模式
    	Message message = new MimeMessage(session);
    	try {
    	    message.setFrom(new InternetAddress(userName));
