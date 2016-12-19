@@ -15,8 +15,10 @@ import java.util.concurrent.Future;
 import java.util.concurrent.ThreadPoolExecutor;
 
 public class BlockingQueueTest {
+    private static Scanner sc;
+
     public static void main(String[] args) {
-	Scanner sc = new Scanner(System.in);
+	sc = new Scanner(System.in);
 	System.out.println("Enter base directory (e.g. D:\\Java\\jdk1.8.0_102\\src\\java): ");
 	String dictory = sc.nextLine();
 	System.out.println("Enter keyword (e.g. volatile): ");

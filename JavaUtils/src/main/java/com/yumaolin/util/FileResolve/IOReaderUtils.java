@@ -2,11 +2,8 @@ package com.yumaolin.util.FileResolve;
 
 import java.io.DataInput;
 import java.io.DataOutput;
-import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.io.RandomAccessFile;
-import java.nio.file.DirectoryStream;
 import java.nio.file.FileSystem;
 import java.nio.file.FileSystems;
 import java.nio.file.FileVisitResult;
@@ -87,7 +84,6 @@ public class IOReaderUtils {
 	/**
 	 * r只读 rw读写 rws表示每次更新时,都对数据和元数据的写磁盘操作进行同步的读/写模式   rwd表示每次更新时,只对数据的写磁盘操作进行同步的读/写模式
 	 */
-	RandomAccessFile raf = new RandomAccessFile(new File(""),"rw");
-	
+	//RandomAccessFile raf = new RandomAccessFile(new File(""),"rw");
     }
 }

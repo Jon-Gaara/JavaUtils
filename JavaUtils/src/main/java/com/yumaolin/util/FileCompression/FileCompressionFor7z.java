@@ -1,4 +1,4 @@
-package com.yumaolin.util.FileCompression;
+/*package com.yumaolin.util.FileCompression;
 
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
@@ -18,18 +18,16 @@ import net.sf.sevenzipjbinding.SevenZipException;
 import net.sf.sevenzipjbinding.impl.RandomAccessFileInStream;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchive;
 import net.sf.sevenzipjbinding.simple.ISimpleInArchiveItem;
-import SevenZip.Compression.LZMA.Decoder;
-import SevenZip.Compression.LZMA.Encoder;
 
 
 public class FileCompressionFor7z {
 	
-	/**
+	*//**
 	 * 7Z压缩
 	 * @param fileName 源文件
 	 * @param newFilePath 新文件路径
 	 * @throws Exception 
-	 */
+	 *//*
 	public static void lzmaZip(String fileName,String newFilePath) throws Exception{
 		File file = new File(fileName);
 		File newFile = new File(newFilePath);
@@ -77,11 +75,11 @@ public class FileCompressionFor7z {
 		inStream.close();
 	}
 	
-	/**
+	*//**
 	 * 7Z解压
 	 * @param filePath 源文件
 	 * @param newFilePath 新文件路径
-	 */
+	 *//*
 	public static void unzipFor7z(String filePath,final String newFilePath){
 		RandomAccessFile randomAccessFile = null;
 		IInArchive inArchive = null;
@@ -152,4 +150,4 @@ public class FileCompressionFor7z {
 			}
 		}
 	}
-}
+}*/

@@ -11,6 +11,8 @@ import org.junit.Test;
 
 public class SocketTest {
 
+    private Scanner sc;
+
     @Test
     public void Socket() throws Exception{
 	try(Socket socket = new Socket()){
@@ -20,7 +22,7 @@ public class SocketTest {
 	    System.out.println(Arrays.toString(inet));
 	    System.out.println(InetAddress.getLocalHost());
 	    InputStream input = socket.getInputStream();
-	    Scanner sc = new Scanner(input);
+	    sc = new Scanner(input);
 	    while(sc.hasNextLine()){
 		String line  = sc.nextLine();
 		System.out.println(line);

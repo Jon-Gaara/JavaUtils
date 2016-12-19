@@ -3,19 +3,17 @@ package com.yumaolin.util.Test;
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.Random;
 
-import javax.script.ScriptEngine;
-import javax.script.ScriptEngineManager;
-
-import org.apache.commons.lang.StringUtils;
 import org.junit.Ignore;
 import org.junit.Test;
 
 import com.yumaolin.util.EncryptionAlgorithm.MD5Encryption;
-import com.yumaolin.util.FileCompression.FileCompressionFor7z;
 import com.yumaolin.util.Mail.JavaSendMailForSSL;
 /*
  * JUnit 4 开始使用 Java 5 中的注解（annotation），常用的几个 annotation 介绍：
@@ -33,6 +31,7 @@ import com.yumaolin.util.Mail.JavaSendMailForSSL;
  */
 public class UtilTest{
 
+    
     @Ignore
     public void SendMailForSSLTest(){
 	 File file = new File("d:\\111.jpg");
@@ -51,9 +50,9 @@ public class UtilTest{
     @Ignore
     public void FileCompressionFor7zTest(){
 	try{
-	    FileCompressionFor7z.lzmaZip("d:\\111.jpg","d:\\111.7z");
-	    FileCompressionFor7z.lzmaZip2("d:\\111.7z","d:\\111.jpg");
-	    FileCompressionFor7z.unzipFor7z("D:\\111.7z","d:\\111.jpg");
+	    //FileCompressionFor7z.lzmaZip("d:\\111.jpg","d:\\111.7z");
+	    //FileCompressionFor7z.lzmaZip2("d:\\111.7z","d:\\111.jpg");
+	    //FileCompressionFor7z.unzipFor7z("D:\\111.7z","d:\\111.jpg");
 	}catch(Exception e){
 		e.printStackTrace();
 	}
@@ -94,6 +93,14 @@ public class UtilTest{
 	if(result>=0)System.out.println(elements[result]);
     }
     
+    public static String getDateForStr(Date date,String dateFormat){
+  	return new SimpleDateFormat(dateFormat).format(new Date());
+      }
+      
+      public static Date getStrForDate(String dateStr,String dateFormat) throws ParseException{
+  	return new SimpleDateFormat(dateFormat).parse(dateStr);
+      }
+      
     @Test
     public void ThrowTest() throws Exception{
 	/*Path path =Paths.get("d:/","111.jpg");
@@ -104,20 +111,10 @@ public class UtilTest{
 	    System.out.println(Arrays.toString(bytes));
 	}
 	IOReaderUtils.FileIterator(Paths.get("d:/home"));*/
-	ScriptEngineManager sem= new ScriptEngineManager();
+	/*ScriptEngineManager sem= new ScriptEngineManager();
 	ScriptEngine se = sem.getEngineByName("javascript");
-	se.eval("print(12312312)");
+	se.eval("print(12312312)");*/
 	
-	StringBuilder query  = new StringBuilder();
-	query.append("SELECT t.UR_ID as urId,t.UR_USERID as urUserId,t.UR_LIMITED_AMOUNT as urLimitedAmount,t.UR_CARDID   as urCardId,");
-	query.append("t.UR_REAL_NAME as urRealName,t.UR_PHONE as urPhone,t.UR_EMAIL s urEmail,t.UR_BANK_CODE   as urBankCode,t.UR_BANKID  as urBankId,t.UR_BANK_NAME  as urBankName,");
-	query.append("t.UR_BANK_ACCOUNT   as urBankAccount,t.UR_AUTH_STATUS  as urAuthStatus,t.UR_CREATE_TIME  as urCreateTime,t.UR_PAY_PASSWORD as urPayPassword,t.UR_SURPLUS _AMOUNT   as urSurplusAmount,,tu.UAF_AUTH_REASON as uafAuthReason FROM ");
-	query.append("t_user_real t LEFT JOIN (select  a.UAF_USERID,a.UAF_AUTH_REASON,a.UAF_ID  from t_user_auth_flow as a ,");
-	query.append("(select max(tuaf.UAF_ID) as uafId from t_user_auth_flow as tuaf group by tuaf.UAF_USERID) as b ");
-	query.append("where a.UAF_ID=b.uafId)tu on t.UR_USERID = tu.UAF_USERID");
-	query.append(" order by  t.UR_CREATE_TIME desc ");
-	System.out.println(query.length());
-	System.out.println("/ADMIN_BACK/ZLYG/USERIDENTITIES/FINDUSERIDENTITIES".contains("/"));
 	//IOReaderUtils.ZipFileIterator(Paths.get("d:/222.zip"));
 	/*List<String> list  = new ArrayList<String>();
 	list.add("A");

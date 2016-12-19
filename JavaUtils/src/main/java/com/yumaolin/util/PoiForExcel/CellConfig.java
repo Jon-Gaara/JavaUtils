@@ -6,7 +6,7 @@ public class CellConfig {
 
 	private String colName;//表头名称
 	private String FieldName;//对应实体字段名称
-	private CellType cellType;//格式化类型
+	private CellTypeEnum cellType;//格式化类型
 	private Map<String,String> valueMap;//值映射类型
 	
 	/**
@@ -25,7 +25,7 @@ public class CellConfig {
 	 * @param fieldName 字段名 必须有get方法
 	 * @param cellType 格式化类型名 CellType枚举类型
 	 */
-	public CellConfig(String colName, String fieldName,CellType cellType) {
+	public CellConfig(String colName, String fieldName,CellTypeEnum cellType) {
 		super();
 		this.colName = colName;
 		FieldName = fieldName;
@@ -38,7 +38,7 @@ public class CellConfig {
 	 * @param cellType 格式化类型
 	 * @param valueMap 键值映射，将filedName的值作为map的键转换，如 Map<String,String> map = new ....;  map.put("01","正常")...
 	 */
-	public CellConfig(String colName, String fieldName,CellType cellType,
+	public CellConfig(String colName, String fieldName,CellTypeEnum cellType,
 			Map<String, String> valueMap) {
 		super();
 		this.colName = colName;
@@ -52,10 +52,10 @@ public class CellConfig {
 	public void setFieldName(String fieldName) {
 		FieldName = fieldName;
 	}
-	public CellType getCellType() {
+	public CellTypeEnum getCellType() {
 		return cellType;
 	}
-	public void setCellType(CellType cellType) {
+	public void setCellType(CellTypeEnum cellType) {
 		this.cellType = cellType;
 	}
 	public Map<String, String> getValueMap() {

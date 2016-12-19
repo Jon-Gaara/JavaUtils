@@ -14,7 +14,7 @@ public class ObjectAnlyzer {
 	if(obj==null)return "null";
 	if(list.contains(obj)) return "...";
 	list.add(obj);
-	Class c1 = obj.getClass();
+	Class<?> c1 = obj.getClass();
 	if(c1==String.class) return (String) obj;
 	if(c1.isArray()){
 	    //可以返回表示数组类型的Class
@@ -48,7 +48,7 @@ public class ObjectAnlyzer {
 		     }
 		     r+=field.getName()+"=";
 		     try{
-			Class t = field.getType();
+			Class<?> t = field.getType();
 			Object val = field.get(obj); 
 			if(t.isPrimitive()) r+=val;
 			else r+=toString(val);
@@ -67,9 +67,9 @@ public class ObjectAnlyzer {
      * 对任意类型的数组进行扩容
      */
     public Object copyOf(Object obj,int newLength){
-	Class c1 = obj.getClass();
+	Class<?> c1 = obj.getClass();
 	if(!c1.isArray()) return null;
-	Class componentType = c1.getComponentType();
+	Class<?> componentType = c1.getComponentType();
 	System.out.println("type : "+componentType);
 	int length = Array.getLength(obj);
 	Object newArray = Array.newInstance(componentType,newLength);

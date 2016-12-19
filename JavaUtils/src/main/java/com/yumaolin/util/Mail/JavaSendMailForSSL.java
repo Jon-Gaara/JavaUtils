@@ -50,7 +50,6 @@ public class JavaSendMailForSSL {
     
     public JavaSendMailForSSL() {}
     
-    @SuppressWarnings("restriction")
     public static void sendMail(String subject,String body,File[] attachment,File[] fileImage){
 	Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	Properties prop = System.getProperties();

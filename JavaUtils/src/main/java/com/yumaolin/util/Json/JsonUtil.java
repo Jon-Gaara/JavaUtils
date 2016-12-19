@@ -30,6 +30,7 @@ public class JsonUtil {
     /**
      * List 转Json,转Json,格式化Date对象
      */
+    @SuppressWarnings("rawtypes")
     public static String writeJsonArrayMessage(Object obj,String dateFormat){
 	JsonConfig config = new JsonConfig();   
 	config.setIgnoreDefaultExcludes(false);//默认为false，即过滤默认的key       

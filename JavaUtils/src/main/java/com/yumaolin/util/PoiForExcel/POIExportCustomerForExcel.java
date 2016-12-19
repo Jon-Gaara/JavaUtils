@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
 import org.apache.poi.ss.usermodel.Row;
@@ -24,7 +25,6 @@ public class POIExportCustomerForExcel {
 	private int v_index = 0;//行数
 	private Sheet hs;
 	private CellStyleControl styleFactory;
-	private CellStyle cellStyle;
 	private OutputStream output;
 	private String newFileName;
 	private Map<String,CellStyle> cellStylemap = new HashMap<String,CellStyle>();
@@ -43,7 +43,6 @@ public class POIExportCustomerForExcel {
 		hs = wb.createSheet(newFileName);
 		//创建样式工程
 		styleFactory = new CellStyleControl(wb);
-		cellStyle = wb.createCellStyle();
 	}
 	public Integer getTermTitleStyle(List<CellConfig> configs){
 		//创建标题项
@@ -68,7 +67,7 @@ public class POIExportCustomerForExcel {
 	 */
 	public void getDetailTitle(List<CellConfig> configs,int v_index){
 		//创建明细项标题(表头)
-	    //v_index += 1;
+	    	//v_index += 1;
 		Row detailTitle = hs.createRow(v_index);
 		detailTitle.setHeight((short) (128*3));
 		int col = 0;
@@ -91,19 +90,23 @@ public class POIExportCustomerForExcel {
 	 * @throws IOException 
 	 */
 	public <T> void getExcelValue(List<CellConfig> configs,List<T> xycList,LinkedHashMap<Integer,Object[]> total) throws IOException{
-		//生成列表数据
+	    		CellStyle cellStyle=wb.createCellStyle();
+	    		//生成列表数据
 			for(int index=0;index<xycList.size();index++){
 				v_index+=1;
 				Row row = hs.createRow(v_index);
 				row.setHeight((short) (128*3));
+				
 				for(int i=0;i<configs.size();i++){
 					row.createCell(i);
 					try {
+					    	
 						//样式
 						if(cellStylemap.get(configs.get(i).getCellType().toString())!=null){
 							cellStyle = cellStylemap.get(configs.get(i).getCellType().toString());
 						}else{
-							cellStyle = styleFactory.getStyleByType(CellType.valueOf(configs.get(i).getCellType().toString()),cellStyle);
+						        cellStyle=wb.createCellStyle();
+							cellStyle = styleFactory.getStyleByType(CellTypeEnum.valueOf(configs.get(i).getCellType().toString()),cellStyle);
 							cellStylemap.put(configs.get(i).getCellType().toString(), cellStyle);
 						}
 						if(cellStyle!=null)
@@ -139,16 +142,17 @@ public class POIExportCustomerForExcel {
 			for(Entry<Integer, Object[]> entry : total.entrySet()) {
 				Cell cell = row.getCell(entry.getKey());
 				//添加值
-				SetExcelValue.setValueAndStyleByType(styleFactory, cell, CellType.valueOf(entry.getValue()[1].toString()), entry.getValue()[0],cellStyle);
+				SetExcelValue.setValueAndStyleByType(styleFactory, cell, CellTypeEnum.valueOf(entry.getValue()[1].toString()), entry.getValue()[0],cellStyle);
 			}
 		}
 		//调整每列宽度自适应
 		for(int j=0;j<configs.size();j++){
-			//hs.autoSizeColumn(j);//SXSSFWorkbook自适应报错
+			//hs.autoSizeColumn(j,true);//SXSSFWorkbook自适应报错
 			hs.setColumnWidth(j,configs.get(j).getFieldName().length()*2*256);
 		}
 		wb.write(output);
 	}
+	
 	public static void main(String[] args){
 			FileOutputStream output = null;
 		try{
@@ -158,9 +162,9 @@ public class POIExportCustomerForExcel {
 			output = new FileOutputStream(new File("d:/test.xlsx"));
 			POIExportCustomerForExcel poi = new POIExportCustomerForExcel(wb,output);
 			List<CellConfig> configs = new ArrayList<CellConfig>();
-			configs.add(new CellConfig("姓名", "name",CellType.String));
-			configs.add(new CellConfig("年龄", "age",CellType.Number));
-			configs.add(new CellConfig("身高", "heigh",CellType.Number));
+			configs.add(new CellConfig("姓名", "name",CellTypeEnum.String));
+			configs.add(new CellConfig("年龄", "age",CellTypeEnum.Number));
+			configs.add(new CellConfig("身高", "heigh",CellTypeEnum.String));
 			List<User>  list = new ArrayList<User>();
 			for(int i=0;i<10000;i++){
 				User user  = new User();
@@ -172,7 +176,7 @@ public class POIExportCustomerForExcel {
 			String fileName="test.xlsx";
 			Long startTime = System.currentTimeMillis();
 			poi.getExcelCreate(fileName);//创建excel
-			poi.v_index = poi.getTermTitleStyle(configs);
+			//poi.v_index = poi.getTermTitleStyle(configs);
 			poi.getDetailTitle(configs,poi.v_index);//创建明细项标题
 			poi.getExcelValue(configs,list, null);//excel写值
 			System.out.println(System.currentTimeMillis()-startTime);

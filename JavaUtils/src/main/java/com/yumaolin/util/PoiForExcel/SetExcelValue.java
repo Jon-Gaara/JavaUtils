@@ -47,7 +47,7 @@ public class SetExcelValue {
 	 * @param type
 	 * @param value
 	 */
-	private static void setValueByType(Cell cell,CellType type, Object value) {
+	private static void setValueByType(Cell cell,CellTypeEnum type, Object value) {
 		switch(type) {
 		case Money : 
 			//金额数值统一做除100处理
@@ -75,7 +75,7 @@ public class SetExcelValue {
 	 * @param type
 	 * @param value
 	 */
-	public static void setValueAndStyleByType(CellStyleControl styleFactory,Cell cell,CellType type, Object value,CellStyle cellStyle) {
+	public static void setValueAndStyleByType(CellStyleControl styleFactory,Cell cell,CellTypeEnum type, Object value,CellStyle cellStyle) {
 		cell.setCellStyle(styleFactory.getStyleByType(type,cellStyle));
 		switch(type) {
 		case Money :

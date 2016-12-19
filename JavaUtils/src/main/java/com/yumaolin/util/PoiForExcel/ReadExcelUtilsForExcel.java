@@ -11,12 +11,14 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.POIXMLDocument;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 import org.apache.poi.hssf.util.HSSFColor.BLACK;
+import org.apache.poi.poifs.filesystem.DocumentFactoryHelper;
 import org.apache.poi.poifs.filesystem.POIFSFileSystem;
+import org.apache.poi.ss.usermodel.BorderStyle;
 import org.apache.poi.ss.usermodel.Cell;
 import org.apache.poi.ss.usermodel.CellStyle;
+import org.apache.poi.ss.usermodel.CellType;
 import org.apache.poi.ss.usermodel.DateUtil;
 import org.apache.poi.ss.usermodel.Font;
 import org.apache.poi.ss.usermodel.Row;
@@ -73,17 +75,18 @@ public class ReadExcelUtilsForExcel {
 		return content;
 	}
 
+	@SuppressWarnings("deprecation")
 	private static String getCellFormatValue(Cell cell) {
 		String cellvalue = "";
 		if (cell != null) {
 			// 判断当前Cell的Type
-			switch (cell.getCellType()){
+			switch (cell.getCellTypeEnum()){
 			// 如果当前Cell的Type为NUMERIC
-			case Cell.CELL_TYPE_NUMERIC:
+			case NUMERIC:
 				BigDecimal db = new BigDecimal(cell.getNumericCellValue()+"");// 避免精度问题，先转成字符串
 				cellvalue = db.toPlainString();
 				break;
-			case Cell.CELL_TYPE_FORMULA:{
+			case FORMULA:{
 				// 判断当前的cell是否为Date
 				if (DateUtil.isCellDateFormatted(cell)) {
 					// 如果是Date类型则，转化为Data格式
@@ -99,7 +102,7 @@ public class ReadExcelUtilsForExcel {
 				}
 				break;
 			}
-			case Cell.CELL_TYPE_STRING:{// 如果当前Cell的Type为STRIN
+			case STRING:{// 如果当前Cell的Type为STRIN
 				// 取得当前的Cell字符串
 				cellvalue = cell.getRichStringCellValue().getString();
 				break;
@@ -126,7 +129,8 @@ public class ReadExcelUtilsForExcel {
 			cell = row.createCell(beginCell);
 		}
 		// 设置存入内容为字符串
-		cell.setCellType(Cell.CELL_TYPE_STRING);
+		//cell.setCellType(Cell.CELL_TYPE_STRING);
+		cell.setCellType(CellType.STRING);
 		getHssfCellStyle(flag);
 		cell.setCellStyle(setBorder);
 		// 向单元格中放入值
@@ -136,12 +140,17 @@ public class ReadExcelUtilsForExcel {
 	public void getHssfCellStyle(boolean flag) {
 		// cell.setCellStyle(styleFactory.getHeaderStyle());
 		font.setFontHeightInPoints((short) 12); // 字体高度
-		font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		//font.setBoldweight(Font.BOLDWEIGHT_BOLD);
+		font.setBold(true);
 		font.setColor(BLACK.index);
-		setBorder.setBorderBottom(CellStyle.BORDER_THIN);
+		/*setBorder.setBorderBottom(CellStyle.BORDER_THIN);
 		setBorder.setBorderLeft(CellStyle.BORDER_THIN);
 		setBorder.setBorderTop(CellStyle.BORDER_THIN);
-		setBorder.setBorderRight(CellStyle.BORDER_THIN);
+		setBorder.setBorderRight(CellStyle.BORDER_THIN);*/
+		setBorder.setBorderBottom(BorderStyle.THIN);
+		setBorder.setBorderLeft(BorderStyle.THIN);
+		setBorder.setBorderTop(BorderStyle.THIN);
+		setBorder.setBorderRight(BorderStyle.THIN);
 		setBorder.setFont(font);
 	}
 	public static void main(String[] args) throws Exception {
@@ -156,7 +165,7 @@ public class ReadExcelUtilsForExcel {
 		/**
 		 * 如果是xlsx文件，则按照xlsx文件类型读取
 		 */
-		if(POIXMLDocument.hasOOXMLHeader(input)){
+		if(DocumentFactoryHelper.hasOOXMLHeader(input)){
 			if(file.length()>fileSize){
 				System.out.println("http://blog.csdn.net/lee_guang/article/details/8936178");
 			}else{
