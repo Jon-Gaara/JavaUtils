@@ -87,6 +87,12 @@
     		<groupId>org.apache.poi</groupId>
     		<artifactId>poi-ooxml-schemas</artifactId>
     		<version>3.15</version>
+    		<exclusions>
+    			<exclusion>
+    				<groupId>stax</groupId>
+    				<artifactId>stax-api</artifactId>
+    			</exclusion>
+    		</exclusions>
 		</dependency>
 		<!--httpClient-->
 		<dependency>
@@ -109,12 +115,32 @@
     		<artifactId>httpmime</artifactId>
     		<version>4.5.2</version>
 		</dependency>
-		<!--SOCKET-->
+		<!--JSON-->
 		<dependency>    
     		<groupId>net.sf.json-lib</groupId>    
     		<artifactId>json-lib</artifactId>    
     		<version>2.4</version>    
    		 	<classifier>jdk15</classifier>    
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-core</artifactId>
+		    <version>2.8.5</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.core</groupId>
+		    <artifactId>jackson-databind</artifactId>
+		    <version>2.8.5</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.codehaus.woodstox</groupId>
+		    <artifactId>stax2-api</artifactId>
+		    <version>4.0.0</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.fasterxml.jackson.dataformat</groupId>
+		    <artifactId>jackson-dataformat-xml</artifactId>
+		    <version>2.8.5</version>
 		</dependency>
 		<!--TwoDimensionCode-->
 		<!--需要从本地导入-->
@@ -209,6 +235,16 @@
 		    <groupId>jdom</groupId>
 		    <artifactId>jdom</artifactId>
 		    <version>1.1</version>
+		</dependency>
+		<dependency>
+			<groupId>dom4j</groupId>
+			<artifactId>dom4j</artifactId>
+			<version>1.6.1</version>
+		</dependency>
+		<dependency>
+		    <groupId>com.lowagie</groupId>
+		    <artifactId>itext</artifactId>
+		    <version>4.2.0</version>
 		</dependency>
 	</dependencies>
 	<build>	

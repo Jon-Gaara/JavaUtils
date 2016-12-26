@@ -28,4 +28,9 @@ public class User {
 	public void setHeigh(String heigh) {
 		this.heigh = heigh;
 	}
+
+	@Override
+	public String toString() {
+	    return "User [name=" + name + ", age=" + age + ", heigh=" + heigh + "]";
+	}
 }

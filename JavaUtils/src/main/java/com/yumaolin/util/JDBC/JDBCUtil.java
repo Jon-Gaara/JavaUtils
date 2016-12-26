@@ -100,7 +100,7 @@ public class JDBCUtil {
     /**
      * 批量更新或插入
      */
-    public static void addOrUpdateBatch(List<List<String>> users){
+    public static void addOrUpdateBatch(List<List<Object>> users){
 	String str = "insert into user(id,name,age,sex) values(?,?,?,?)";
 	try{
 	    conn = getConnection();

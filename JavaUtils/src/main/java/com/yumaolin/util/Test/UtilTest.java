@@ -3,12 +3,15 @@ package com.yumaolin.util.Test;
 import java.io.File;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Proxy;
+import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.Random;
+import java.util.regex.Pattern;
 
 import org.junit.Ignore;
 import org.junit.Test;

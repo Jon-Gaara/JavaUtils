@@ -231,6 +231,7 @@ public class HttpClientSendHttpRequest {
 		HttpEntity resEntity = response.getEntity();
 		if (response.getStatusLine().getStatusCode() == 200) {
 		    System.out.println("Response content length: " + resEntity.getContentLength());
+		    System.out.println("Response content: " + EntityUtils.toString(resEntity));
 		}
 		EntityUtils.consume(resEntity);
 	    } finally {
@@ -249,63 +250,31 @@ public class HttpClientSendHttpRequest {
 	}
 
     public static void main(String[] args) throws UnsupportedEncodingException, NoSuchAlgorithmException {
-	// String str =
-	// sendGet("http://api.avatardata.cn/MD5/Decode","key=17433d3c279041bb99f11f8cbc30dc11&md5=ad44680182ece4de467d6a7b91ea5463");
-	// String str =
-	// sendGet("http://apis.haoservice.com/creditop/IcQuery/QueryEntBaseInfo","entName=440310809147096&key=5ab4dbe042b44a51b33c02ccfecb0182");
-	// System.out.println(str);
-	// 440310809147096,430223197607296926
 	Map<File, String> fileMap = new LinkedHashMap<File, String>();
 	fileMap.put(new File("d:\\111.jpg"), "idCardPic");
 	fileMap.put(new File("d:\\222.jpg"), "idCardPic");
 	fileMap.put(new File("d:\\123123.png"), "idCardPic");
 
 	Map<String, String> textMap = new LinkedHashMap<String, String>();
-	textMap.put("userId", "1026");
-	textMap.put("userName", "13975463072");
+	textMap.put("userId", "1");
+	textMap.put("userName", "18128866178");
 	textMap.put("password", "yyg123abc@zl");
-	textMap.put("idCard", "10244");
+	textMap.put("idCard", "450803198910206490");
 	textMap.put("bankCode", "10244");
 	textMap.put("payPassWord", "10244");
+	textMap.put("urPayPassword", "10244");
 	textMap.put("bankName", "10244");
-	textMap.put("accounName", "10244");
+	textMap.put("accountName", "10244");
+	textMap.put("phone", "18888888888");
 	textMap.put("billType", "01");
 	textMap.put("pageSize", "10");
 	textMap.put("pageNo", "1");
 	textMap.put("umId", "1");
 	textMap.put("umRead", "11");
 	textMap.put("umStatus", "00");
+	textMap.put("password","qwer123456");
 
-	HttpClientSendHttpRequest.sendPostForm("http://localhost/api/certification/limitedAmountFlow.action",textMap);
-	// HttpClientSendHttpRequest.SendHttpUploadFile("http://localhost/api/certification/uploadUsercertification.action",fileMap,textMap);
-	/*
-	 * String srcChnl="APP"; String busiCd="AC01"; String bankCd="0102";
-	 * String userNm="我要发"; String mobileNo="18688498751"; String
-	 * credtTp="0"; String credtNo="360203199505200054"; String acntTp="01";
-	 * String acntNo="622848115916489073"; String mchntCd="0002900F0345178";
-	 * String isCallback="0"; String reserved1="";
-	 * 
-	 * List<String> list = new ArrayList<String>(); list.add(srcChnl);
-	 * list.add(busiCd); list.add(bankCd); list.add(userNm);
-	 * list.add(mobileNo); list.add(credtTp); list.add(credtNo);
-	 * list.add(acntTp); list.add(acntNo); list.add(mchntCd);
-	 * list.add(isCallback); list.add(reserved1); Collections.sort(list);
-	 * StringBuilder str = new StringBuilder(); for(String gent:list){
-	 * str.append(gent).append("|"); } String bigstr =
-	 * str.toString().substring(0,str.toString().length()-1);
-	 * System.out.println(bigstr); String firstSign =
-	 * SHA1Encryption.SHA1(bigstr); String sign =
-	 * SHA1Encryption.SHA1(firstSign+"|"+"123456");
-	 * 
-	 * textMap.put("srcChnl", "APP"); textMap.put("busiCd", "AC01");
-	 * textMap.put("bankCd", "0102"); textMap.put("userNm", "我要发");
-	 * textMap.put("mobileNo", "18688498751"); textMap.put("credtTp", "0");
-	 * textMap.put("credtNo", "360203199505200054"); textMap.put("acntTp",
-	 * "01"); textMap.put("acntNo", "622848115916489073");
-	 * textMap.put("mchntCd", "0002900F0345178"); textMap.put("isCallback",
-	 * "0"); textMap.put("reserved1", ""); textMap.put("signature", sign);
-	 * HttpClientSendHttpRequest.sendPostForm(
-	 * "https://fht-test.fuiou.com/fuMer/api_contract.do",textMap);
-	 */
+	HttpClientSendHttpRequest.sendPostForm("http://localhost:8090/api/user/login.action",textMap);
+	//HttpClientSendHttpRequest.SendHttpUploadFile("http://localhost/api/certification/uploadUsercertification.action",fileMap,textMap);
     }
 }

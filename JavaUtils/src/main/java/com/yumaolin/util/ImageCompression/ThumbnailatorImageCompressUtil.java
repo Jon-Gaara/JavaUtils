@@ -70,8 +70,8 @@ public class ThumbnailatorImageCompressUtil {
        
        int ImageWidth = image.getWidth();//图片真实的宽
        int ImageHeight = image.getHeight();//图片真实的高
-       BigDecimal scale= new BigDecimal(width).divide(new BigDecimal(height));
-       BigDecimal ImageScale =new BigDecimal(ImageWidth).divide(new BigDecimal(ImageHeight));
+       BigDecimal scale= new BigDecimal(width).divide(new BigDecimal(height),2,BigDecimal.ROUND_HALF_EVEN);
+       BigDecimal ImageScale =new BigDecimal(ImageWidth).divide(new BigDecimal(ImageHeight),2,BigDecimal.ROUND_HALF_EVEN);
        
        if(scale.equals(ImageScale)){
 	   if(ImageWidth>ImageHeight){
@@ -146,10 +146,12 @@ public class ThumbnailatorImageCompressUtil {
    }
    
    public static void main(String[] args) throws IOException {
-       File file = new File("d:\\111.jpg");
+       File file = new File("d:\\666.jpg");
        //ThumbnailatorImageCompressUtil.ImageFormatCoversion(file,"jpeg","d:\\123555");
        //ThumbnailatorImageCompressUtil.ImageRotate(file,"jpg",440,0,180, "d:\\99999");
        //ThumbnailatorImageCompressUtil.ImageAndGlistening(file,500,300,"d:\\5555555",new File("d:\\123123.png"),Positions.CENTER);
-       ThumbnailatorImageCompressUtil.ImageScale(file,0.5,"jpg","d:\\1231231234");//默认格式为jpeg
+       //ThumbnailatorImageCompressUtil.ImageScale(file,0.1,"jpg","d:\\1231231234");//默认格式为jpeg
+       //ThumbnailatorImageCompressUtil.ImageScaleForSize(file, 500, 500, "jpg", "d:\\1231231234");
+       ThumbnailatorImageCompressUtil.ImageScaleForSize2(file, 500, 500, "jpg", "d:\\123ds");
    }
 }
