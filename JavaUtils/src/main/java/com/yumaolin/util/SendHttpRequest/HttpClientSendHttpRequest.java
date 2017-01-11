@@ -256,7 +256,7 @@ public class HttpClientSendHttpRequest {
 	fileMap.put(new File("d:\\123123.png"), "idCardPic");
 
 	Map<String, String> textMap = new LinkedHashMap<String, String>();
-	textMap.put("userId", "1");
+	textMap.put("userId", "1001639541");
 	textMap.put("userName", "18128866178");
 	textMap.put("password", "yyg123abc@zl");
 	textMap.put("idCard", "450803198910206490");
@@ -269,12 +269,12 @@ public class HttpClientSendHttpRequest {
 	textMap.put("billType", "01");
 	textMap.put("pageSize", "10");
 	textMap.put("pageNo", "1");
-	textMap.put("umId", "1");
-	textMap.put("umRead", "11");
-	textMap.put("umStatus", "00");
+	//textMap.put("umId", "1");
+	textMap.put("umRead", "01");
+	//textMap.put("umStatus", "00");
 	textMap.put("password","qwer123456");
 
-	HttpClientSendHttpRequest.sendPostForm("http://localhost:8090/api/user/login.action",textMap);
+	HttpClientSendHttpRequest.sendPostForm("http://cs.ego168.cn/api/certification/billingDetails.action",textMap);
 	//HttpClientSendHttpRequest.SendHttpUploadFile("http://localhost/api/certification/uploadUsercertification.action",fileMap,textMap);
     }
 }

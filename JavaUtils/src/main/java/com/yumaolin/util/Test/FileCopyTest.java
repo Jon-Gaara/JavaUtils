@@ -15,7 +15,7 @@ public class FileCopyTest {
     private static final int BUFFER_SIZE=131072;
     public static void fileCopy(final File src,final File dst) throws IOException {
 	    try(final RandomAccessFile inFile = new RandomAccessFile(src, "r" )){
-	        try(final RandomAccessFile outFile = new RandomAccessFile(dst, "rw" );){
+	        try(final RandomAccessFile outFile = new RandomAccessFile(dst, "rw" )){
 	            final FileChannel inChannel = inFile.getChannel();
 	            final FileChannel outChannel = outFile.getChannel();
 	            long pos = 0;

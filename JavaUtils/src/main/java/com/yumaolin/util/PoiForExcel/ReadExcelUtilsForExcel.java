@@ -83,7 +83,7 @@ public class ReadExcelUtilsForExcel {
 			switch (cell.getCellTypeEnum()){
 			// 如果当前Cell的Type为NUMERIC
 			case NUMERIC:
-				BigDecimal db = new BigDecimal(cell.getNumericCellValue()+"");// 避免精度问题，先转成字符串
+				BigDecimal db = new BigDecimal(String.valueOf(cell.getNumericCellValue()));// 避免精度问题，先转成字符串
 				cellvalue = db.toPlainString();
 				break;
 			case FORMULA:{
@@ -159,7 +159,7 @@ public class ReadExcelUtilsForExcel {
 		InputStream input = new FileInputStream(file);
 		if (!input.markSupported()) {
 			 input = new PushbackInputStream(input, 8);
-	    }
+	    	}
 		//boolean flag = ReadExcelUtilsForXls.getTypeByStream(file, "xlsx");
 		//POIXMLDocument.hasOOXMLHeader(input)判断是否是xlsx文件
 		/**

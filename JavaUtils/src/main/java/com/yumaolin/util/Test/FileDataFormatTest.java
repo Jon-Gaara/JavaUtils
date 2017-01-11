@@ -14,8 +14,8 @@ import org.junit.Test;
 
 
 public class FileDataFormatTest {
-    private static final String oldFilePath="d:/2002002222COD_001_20161226_02NEW.txt";
-    private static final String newFilePath="d:/new2002002222COD_001_20161226_02NEW.txt";
+    private static final String oldFilePath="d:/20170109.txt";
+    private static final String newFilePath="d:/new20170109.txt";
     private static final String enter = "\r\n";
     private static final String split = "|";
     //private static final String startMark="000000000|000000000000003|00000000|0000000000000000000000000000000000000000000000000000000000000000|000000000000000000000|0000000000000000000000000000000000000000000000000000000000000000|0000000000000000000000000000000000000000000000000000000000000000|000000000000|0|"+Consts.getSuitString(String.valueOf(NumberUtil.muitDouble(String.valueOf(totalCount.getSumTotal2())).longValue()),12)+"|00000000000000000000|0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000";
