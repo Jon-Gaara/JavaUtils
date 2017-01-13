@@ -148,7 +148,7 @@ public class POIExportCustomerForExcel {
 		//调整每列宽度自适应
 		for(int j=0;j<configs.size();j++){
 			//hs.autoSizeColumn(j,true);//SXSSFWorkbook自适应报错
-			hs.setColumnWidth(j,configs.get(j).getFieldName().length()*2*256);
+			hs.setColumnWidth(j,configs.get(j).getColName().length()*2*256);
 		}
 		wb.write(output);
 	}
