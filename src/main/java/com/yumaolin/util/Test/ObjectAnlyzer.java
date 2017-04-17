@@ -67,13 +67,15 @@ public class ObjectAnlyzer {
      * 对任意类型的数组进行扩容
      */
     public Object copyOf(Object obj,int newLength){
-	Class<?> c1 = obj.getClass();
-	if(!c1.isArray()) return null;
-	Class<?> componentType = c1.getComponentType();
-	System.out.println("type : "+componentType);
-	int length = Array.getLength(obj);
-	Object newArray = Array.newInstance(componentType,newLength);
-	System.arraycopy(obj,0,newArray,0,Math.min(length, newLength));
-	return newArray;
+		Class<?> c1 = obj.getClass();
+		if(!c1.isArray()) {
+			return null;
+		}
+		Class<?> componentType = c1.getComponentType();
+		System.out.println("type : "+componentType);
+		int length = Array.getLength(obj);
+		Object newArray = Array.newInstance(componentType,newLength);
+		System.arraycopy(obj,0,newArray,0,Math.min(length, newLength));
+		return newArray;
     }
 }

@@ -6,20 +6,20 @@ import java.sql.SQLException;
 
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ApplicationObjectSupport;
-import org.springframework.context.support.FileSystemXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import com.mchange.v2.c3p0.ComboPooledDataSource;
 
 public class SpringBeans extends ApplicationObjectSupport{
     private final static String springFilePath = "classpath*:spring/applicationContext.xml";
-    private final static ApplicationContext context =new FileSystemXmlApplicationContext(new String[]{springFilePath});
-    //private final static ApplicationContext context = new ClassPathXmlApplicationContext(springFilePath);
+    //private final static ApplicationContext context =new FileSystemXmlApplicationContext(new String[]{springFilePath});
+    private final static ApplicationContext context = new ClassPathXmlApplicationContext(springFilePath);
     //private final static GenericXmlApplicationContext applicationContext =getGenericXmlApplicationContext();
     //private final static DefaultListableBeanFactory dbr = getDefaultListableBeanFactory();
     //private final static BeanFactory beanFactory = new ClassPathXmlApplicationContext(springFilePath);
     
     public static Connection getConnection(){
-	ComboPooledDataSource dataSource = (ComboPooledDataSource)context.getBean("dataSource"); 
+	ComboPooledDataSource dataSource = context.getBean("dataSource",ComboPooledDataSource.class); 
 	//ComboPooledDataSource dataSource = (ComboPooledDataSource) applicationContext.getBean("dataSource");
 	//ComboPooledDataSource dataSource = (ComboPooledDataSource)dbr.getBean("dataSource");
 	//ComboPooledDataSource dataSource = (ComboPooledDataSource)beanFactory.getBean("dataSource");
@@ -60,8 +60,8 @@ public class SpringBeans extends ApplicationObjectSupport{
     }*/
     
     public static void main(String[] args) throws SQLException {
-	DatabaseMetaData dbmd= SpringBeans.getConnection().getMetaData();
-	boolean a=dbmd.supportsBatchUpdates();//判断该数据库支不支持批量更新
-	System.out.println(a);
+    	DatabaseMetaData dbmd= SpringBeans.getConnection().getMetaData();
+    	boolean a=dbmd.supportsBatchUpdates();//判断该数据库支不支持批量更新
+    	System.out.println(a);
     }
 }
