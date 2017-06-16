@@ -50,7 +50,8 @@ public class JavaSendMailForSSL {
     
     public JavaSendMailForSSL() {}
     
-    public static void sendMail(String subject,String body,File[] attachment,File[] fileImage){
+    @SuppressWarnings("restriction")
+	public static void sendMail(String subject,String body,File[] attachment,File[] fileImage){
 	Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 	Properties prop = System.getProperties();
 	prop.setProperty("mail.smtp.host", smtpHostName);
@@ -64,7 +65,7 @@ public class JavaSendMailForSSL {
 	Message message = new MimeMessage(session);
 	try {
 	    message.setFrom(new InternetAddress(userName));
-	  //指定收件人，多人时用逗号分隔
+	    //指定收件人，多人时用逗号分隔
 	    InternetAddress[] tos = InternetAddress.parse(toMailAddress,false);
     	    message.setRecipients(Message.RecipientType.TO,tos);//收件人
     	    //message.setRecipients(Message.RecipientType.CC,tos);//抄送人
@@ -77,14 +78,14 @@ public class JavaSendMailForSSL {
     	    
     	      //添加图片的内容
     	    if(fileImage!=null && fileImage.length>0){
-    		for(File imageFile:fileImage){
-    		    MimeBodyPart bodyPart = new MimeBodyPart();
-    		    DataSource source = new FileDataSource(imageFile);
-    		    bodyPart.setDataHandler(new DataHandler(source));
-    		    //System.out.println(imageFile.getName());
-    		    bodyPart.setContentID(MimeUtility.encodeWord(imageFile.getName()));
-    		    multipart.addBodyPart(bodyPart);
-    		}
+	    		for(File imageFile:fileImage){
+	    		    MimeBodyPart bodyPart = new MimeBodyPart();
+	    		    DataSource source = new FileDataSource(imageFile);
+	    		    bodyPart.setDataHandler(new DataHandler(source));
+	    		    //System.out.println(imageFile.getName());
+	    		    bodyPart.setContentID(MimeUtility.encodeWord(imageFile.getName()));
+	    		    multipart.addBodyPart(bodyPart);
+	    		}
     	    }
     	    
     	    //添加附件的内容
@@ -123,11 +124,11 @@ public class JavaSendMailForSSL {
     }
     
     public static void main(String[] args) {
-	File file = new File("d:\\111.jpg");
-	File file2 = new File("d:\\222.jpg");
-	String body = "测试邮件<br/><img src='cid:"+file.getName()+"'><br/>";
+	//File file = new File("d:\\111.jpg");
+	//File file2 = new File("d:\\222.jpg");
+	String body = "测试邮件<br/>asdasdas<br/>";
 	System.out.println(body);
-	JavaSendMailForSSL.sendMail("测试邮件!",body,new File[]{file2},new File[]{file});
+	JavaSendMailForSSL.sendMail("测试邮件!",body,null,null);
 	System.out.println("发送邮件成功!");
     }
 }

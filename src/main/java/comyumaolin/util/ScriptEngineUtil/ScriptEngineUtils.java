@@ -1,4 +1,4 @@
-package comyumaolin.util.ScriptEngineUtils;
+package comyumaolin.util.ScriptEngineUtil;
 
 import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;

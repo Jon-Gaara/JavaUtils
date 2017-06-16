@@ -7,21 +7,12 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Calendar;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
 import java.util.Random;
-import java.util.function.BiConsumer;
 
-import org.apache.commons.lang.time.DateFormatUtils;
-import org.apache.commons.lang.time.FastDateFormat;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import com.itextpdf.text.log.SysoCounter;
 import com.yumaolin.util.EncryptionAlgorithm.MD5Encryption;
 import com.yumaolin.util.Mail.JavaSendMailForSSL;
 /*
@@ -112,16 +103,6 @@ public class UtilTest{
       
     @Test
     public void ThrowTest(){
-    int a = 1;
-    int b = 2;
-    int c = 3;
-    if(a==0){
-    	System.out.println(a);
-    }else if(b==2 && c!=3){
-    	System.out.println(b);
-    }else if(c==3){
-    	System.out.println(c);
-    }
 	/*Path path =Paths.get("d:/","111.jpg");
 	if(Files.exists(path)){
 	    byte[] bytes = Files.readAllBytes(path);

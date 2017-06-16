@@ -100,5 +100,5 @@ public class JavaSendMailForNoSSL {
    	}catch(Exception e){
    	    logger.error(e.getMessage());
    	}
-       }
+   }
 }
