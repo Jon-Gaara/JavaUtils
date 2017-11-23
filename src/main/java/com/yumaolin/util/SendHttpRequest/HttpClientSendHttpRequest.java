@@ -25,6 +25,7 @@ import org.apache.http.entity.mime.content.StringBody;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
+import org.apache.http.message.BasicHeader;
 import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.util.EntityUtils;
 
@@ -51,6 +52,8 @@ public class HttpClientSendHttpRequest {
 	// 設置httpGet的头部參數信息
 	// httpPost.setHeader(arg0);
 	// httpPost.setHeader("apikey","1fe02d93e72a22bc6474235054d42125");
+	httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+	httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
 	// 创建参数队列
 	List<NameValuePair> list = new ArrayList<NameValuePair>();
 	if (param != null && param.size() > 0) {
@@ -111,9 +114,11 @@ public class HttpClientSendHttpRequest {
 	// 設置httpGet的头部參數信息
 	// httpPost.setHeader(arg0);
 	// httpPost.setHeader("apikey","1fe02d93e72a22bc6474235054d42125");
+	httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+	httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
 	String entityStr = "";
 	try {
-	    StringEntity jsonEntity = new StringEntity(param);
+	    StringEntity jsonEntity = new StringEntity(param,ContentType.APPLICATION_JSON);
 	    // uefEntity = new UrlEncodedFormEntity(list,requestEncoding);
 	    httpPost.setEntity(jsonEntity);
 	    System.out.println("executing request " + httpPost.getURI());
@@ -159,6 +164,8 @@ public class HttpClientSendHttpRequest {
 	try {
 	    // 创建httpget
 	    HttpGet httpGet = new HttpGet(url);
+	    httpGet.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+	    httpGet.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
 	    System.out.println("executing request " + httpGet.getURI());
 	    // httpGet.setHeader("apikey","1fe02d93e72a22bc6474235054d42125");
 	    // httpGet.setHeader("apix-key","a4958d51d93f47d74bf712d8f4d83491");
@@ -198,6 +205,8 @@ public class HttpClientSendHttpRequest {
 	CloseableHttpClient httpClient = HttpClients.createDefault();
 	try {
 	    HttpPost httpPost = new HttpPost(url);
+	    httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+	    httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
 	    MultipartEntityBuilder muitipart = MultipartEntityBuilder.create();
 
 	    // HttpEntity entity =
