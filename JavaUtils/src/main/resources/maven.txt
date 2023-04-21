@@ -1,5 +1,0 @@
-(1)mvn install:install-file -Dfile=F:\mavenNotjar\hibernate-commons-annotations-4.0.2.Final.jar -DgroupId=org.hibernate -DartifactId=hibernate-commons-annotations -Dversion=4.0.2.Final -Dpackaging=jar
-(2)mvn install:install-file -Dfile=F:\mavenNotjar\ojdbc6-1.0.0.6.jar -DgroupId=com.oracle -DartifactId=ojdbc6 -Dversion=1.0.0.6 -Dpackaging=jar
-(3)mvn install:install-file -Dfile=F:\mavenNotjar\jta-1_0_1B-classes.zip -DgroupId=javax.transaction -DartifactId=jta -Dversion=1.0.1B -Dpackaging=jar
-(4)mvn install:install-file -Dfile=F:\mavenNotjar\QRCode.jar   -DgroupId=QRCode   -DartifactId=QRCode   -Dversion=3.0 -Dpackaging=jar
-(5)mvn install:install-file -Dfile=F:\mavenNotjar\SevenZip.jar -DgroupId=SevenZip -DartifactId=SevenZip -Dversion=3.0 -Dpackaging=jar
