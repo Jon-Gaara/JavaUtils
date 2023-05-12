@@ -1,11 +1,12 @@
 package com.jon.thread;
 
+import java.io.Serializable;
 import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
-public class Bank {
+public class Bank implements Serializable {
     private final double[] accounts;
     private Lock bankLock;
     private Condition sufficientFunds;
