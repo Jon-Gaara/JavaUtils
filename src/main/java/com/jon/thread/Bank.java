@@ -13,6 +13,10 @@ public class Bank implements Serializable {
     private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private Lock readLock = rwl.readLock();
     private Lock writeLock = rwl.writeLock();
+    private static final int aaa = 111;
+    private static final long bbbb = 22222;
+    private static final double cccc = 33333d;
+    private static final float dddd = 123123123f;
 
     public Bank(int n, double initialBalance) {
         accounts = new double[n];

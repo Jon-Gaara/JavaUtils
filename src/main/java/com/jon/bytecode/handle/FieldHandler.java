@@ -37,9 +37,9 @@ public class FieldHandler implements BaseByteCodeHandle{
             fieldInfo.setAttributes(new AttributeInfo[attrLength]);
             for(int j=0;j<attrLength;j++){
                 AttributeInfo attributeInfo = new AttributeInfo();
-                fieldInfo.getAttributes()[j].setAttributeNameIndex(new U2(codeBuf.get(), codeBuf.get()));
+                attributeInfo.setAttributeNameIndex(new U2(codeBuf.get(), codeBuf.get()));
                 U4 attrInfoLength = new U4(codeBuf.get(), codeBuf.get(), codeBuf.get(), codeBuf.get());
-                fieldInfo.getAttributes()[j].setAttributeLength(attrInfoLength);
+                attributeInfo.setAttributeLength(attrInfoLength);
                 byte[] info = new byte[attrInfoLength.toInt()];
                 codeBuf.get(info,0,attrInfoLength.toInt());
                 attributeInfo.setInfo(info);

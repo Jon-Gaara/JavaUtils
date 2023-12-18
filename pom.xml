@@ -228,6 +228,12 @@
             <artifactId>bcprov-jdk18on</artifactId>
             <version>1.74</version>
         </dependency>
+        <!--asm-->
+        <dependency>
+            <groupId>org.ow2.asm</groupId>
+            <artifactId>asm</artifactId>
+            <version>9.6</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>

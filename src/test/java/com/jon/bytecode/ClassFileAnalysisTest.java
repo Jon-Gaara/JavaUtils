@@ -1,10 +1,7 @@
 package com.jon.bytecode;
 
 import com.jon.bytecode.type.*;
-import com.jon.bytecode.type.constant.ConstantClassInfo;
-import com.jon.bytecode.type.constant.ConstantIntegerInfo;
-import com.jon.bytecode.type.constant.ConstantUtf8Info;
-import com.jon.bytecode.type.constant.ConstantValueInfo;
+import com.jon.bytecode.type.constant.*;
 import com.jon.bytecode.utils.*;
 import org.junit.Test;
 
@@ -117,8 +114,14 @@ public class ClassFileAnalysisTest {
                 CpInfo cvInfo = classFile.getConstantPool()[constantValueInfo.getConstantValueIndex().toInt() - 1];
                 if(cvInfo instanceof ConstantUtf8Info){
                     System.out.println("constantValue:"+ cvInfo);
+                }else if (cvInfo instanceof ConstantFloatInfo) {
+                    System.out.println("constantValue:"+((ConstantFloatInfo) cvInfo).getBytes().toFloat());
                 }else if(cvInfo instanceof ConstantIntegerInfo){
                     System.out.println("constantValue:"+((ConstantIntegerInfo) cvInfo).getBytes().toInt());
+                }else if (cvInfo instanceof ConstantDoubleInfo) {
+                    System.out.println("constantValue:"+cvInfo);
+                }else if (cvInfo instanceof ConstantLongInfo) {
+                    System.out.println("constantValue:"+ cvInfo);
                 }
             }
         }

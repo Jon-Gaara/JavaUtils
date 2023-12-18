@@ -1,5 +1,6 @@
 package com.jon.bytecode.type.constant;
 
+import cn.hutool.core.util.ByteUtil;
 import com.jon.bytecode.type.U1;
 
 /**

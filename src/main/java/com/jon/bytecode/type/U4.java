@@ -1,6 +1,8 @@
 package com.jon.bytecode.type;
 
-import java.util.Arrays;
+import cn.hutool.core.util.ByteUtil;
+
+import java.nio.ByteOrder;
 
 public class U4 {
 
@@ -15,6 +17,10 @@ public class U4 {
         a |= (value[1] & 0xff) << 16;
         a |= (value[2] & 0xff) << 8;
         return a | (value[3] & 0xff);
+    }
+
+    public float toFloat(){
+        return ByteUtil.bytesToFloat(value, ByteOrder.BIG_ENDIAN);
     }
 
     public String toHexString(){

@@ -4,6 +4,7 @@ import org.springframework.aop.framework.AdvisedSupport;
 import org.springframework.aop.framework.AopProxy;
 import org.springframework.aop.support.AopUtils;
 
+import java.lang.instrument.Instrumentation;
 import java.lang.reflect.Field;
 
 /**

@@ -4,3 +4,4 @@
 
 1) 新增加密字符按可搜索排序
 2) 新增bytecode，解析Java class file,参考《Java虚拟机字节码:从入门到实战》
+3) 新增ASM生成JDK动态代理,参考《Java虚拟机字节码:从入门到实战》
