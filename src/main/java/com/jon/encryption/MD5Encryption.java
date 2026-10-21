@@ -4,7 +4,6 @@ import java.security.MessageDigest;
 import org.apache.commons.lang.StringUtils;
 
 public class MD5Encryption {
-    private static final String key = "破解啊!你倒是给我破解啊!";
     private static final String format = "utf-8";
 
     /**
@@ -49,7 +48,7 @@ public class MD5Encryption {
             md.update(input);
 
             // 3 计算后获得字节数组,这就是那128位了
-            byte[] buff = md.digest(key.getBytes(format));
+            byte[] buff = md.digest();
 
             // 4 把数组每一字节（一个字节占八位）换成16进制连成md5字符串
             md5str = bytesToHex(buff);

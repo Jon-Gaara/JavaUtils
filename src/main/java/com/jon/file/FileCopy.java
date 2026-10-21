@@ -27,8 +27,9 @@ public class FileCopy {
         try (InputStream in = new BufferedInputStream(new FileInputStream(src), BUFFER_SIZE);
             OutputStream out = new BufferedOutputStream(new FileOutputStream(dst), BUFFER_SIZE)) {
             byte[] buffer = new byte[BUFFER_SIZE];
-            while (in.read(buffer) > 0) {
-                out.write(buffer);
+            int length;
+            while ((length = in.read(buffer)) != -1) {
+                out.write(buffer, 0, length);
             }
         } catch (Exception e) {
             e.printStackTrace();

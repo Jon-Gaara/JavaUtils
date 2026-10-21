@@ -21,16 +21,12 @@ public class SpringBeans extends ApplicationObjectSupport {
 
     public static Connection getConnection() {
         ComboPooledDataSource dataSource = context.getBean("dataSource", ComboPooledDataSource.class);
-        // ComboPooledDataSource dataSource = (ComboPooledDataSource) applicationContext.getBean("dataSource");
-        // ComboPooledDataSource dataSource = (ComboPooledDataSource)dbr.getBean("dataSource");
-        // ComboPooledDataSource dataSource = (ComboPooledDataSource)beanFactory.getBean("dataSource");
-        Connection connection = null;
         try {
-            connection = dataSource.getConnection();
+            return dataSource.getConnection();
         } catch (SQLException e) {
-            e.printStackTrace();
+            // 吞掉异常返回 null 只会把 NPE 推迟到调用方，这里直接抛出保留真实原因
+            throw new IllegalStateException("从 c3p0 连接池获取连接失败", e);
         }
-        return connection;
     }
 
     public static void closeConnection(Connection connection) {

@@ -14,10 +14,10 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 
 public class SFTPContext {
-    private static String host = "127.0.0.1";
-    private static int port = 7393;
-    private static String username = "fjrssc";
-    private static String password = "123123123";
+    private static String host = System.getenv().getOrDefault("SFTP_HOST", "127.0.0.1");
+    private static int port = Integer.parseInt(System.getenv().getOrDefault("SFTP_PORT", "22"));
+    private static String username = System.getenv("SFTP_USERNAME");
+    private static String password = System.getenv("SFTP_PASSWORD");
     private static Session sshSession;
 
     /**
@@ -30,8 +30,15 @@ public class SFTPContext {
             sshSession = jsch.getSession(username, host, port);
             sshSession.setPassword(password);
             Properties sshConfig = new Properties();
-            // 设置第一次登陆的时候提示，可选值：(ask | yes | no)
-            sshConfig.put("StrictHostKeyChecking", "no");
+            // 主机密钥校验：默认 yes（严格），可用环境变量 SFTP_STRICT_HOST_KEY_CHECKING 覆盖。
+            // 关闭校验会让连接暴露在中间人攻击之下；首次连接前应先把主机公钥写入 ~/.ssh/known_hosts
+            sshConfig.put("StrictHostKeyChecking",
+                System.getenv().getOrDefault("SFTP_STRICT_HOST_KEY_CHECKING", "yes"));
+            String knownHosts = System.getenv().getOrDefault("SFTP_KNOWN_HOSTS",
+                System.getProperty("user.home") + "/.ssh/known_hosts");
+            if (new File(knownHosts).exists()) {
+                jsch.setKnownHosts(knownHosts);
+            }
             // 设置登陆超时时间
             sshSession.setConfig(sshConfig);
 			// 设置timeout时间

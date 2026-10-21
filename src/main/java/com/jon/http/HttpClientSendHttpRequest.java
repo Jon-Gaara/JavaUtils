@@ -51,7 +51,7 @@ public class HttpClientSendHttpRequest {
         HttpPost httpPost = new HttpPost(url);
         // 設置httpGet的头部參數信息
         // httpPost.setHeader(arg0);
-        // httpPost.setHeader("apikey","1fe02d93e72a22bc6474235054d42125");
+        // httpPost.setHeader("apikey","<your-api-key>");
         httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
         httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
         // 创建参数队列
@@ -113,7 +113,7 @@ public class HttpClientSendHttpRequest {
         HttpPost httpPost = new HttpPost(url);
         // 設置httpGet的头部參數信息
         // httpPost.setHeader(arg0);
-        // httpPost.setHeader("apikey","1fe02d93e72a22bc6474235054d42125");
+        // httpPost.setHeader("apikey","<your-api-key>");
         httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
         httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
         String entityStr = "";
@@ -167,8 +167,8 @@ public class HttpClientSendHttpRequest {
             httpGet.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
             httpGet.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
             System.out.println("executing request " + httpGet.getURI());
-            // httpGet.setHeader("apikey","1fe02d93e72a22bc6474235054d42125");
-            // httpGet.setHeader("apix-key","a4958d51d93f47d74bf712d8f4d83491");
+            // httpGet.setHeader("apikey","<your-api-key>");
+            // httpGet.setHeader("apix-key","<your-apix-key>");
             // 执行get请求.
             CloseableHttpResponse response = httpClient.execute(httpGet);
             try {
@@ -176,10 +176,13 @@ public class HttpClientSendHttpRequest {
                 System.out.println("-------------------------------");
                 System.out.println(response.getStatusLine().getStatusCode());
                 if (response.getStatusLine().getStatusCode() == 200) {
-                    // 打印响应内容长度
-                    System.out.println("Response content length: " + entity.getContentLength());
-                    // 打印响应内容
-                    System.out.println("Response content: " + EntityUtils.toString(entity));
+                    if (entity != null) {
+                        // 打印响应内容并返回给调用方
+                        String content = EntityUtils.toString(entity);
+                        System.out.println("Response content length: " + content.length());
+                        System.out.println("Response content: " + content);
+                        return content;
+                    }
                 }
                 System.out.println("------------------------------------");
             } finally {
@@ -244,10 +247,16 @@ public class HttpClientSendHttpRequest {
                 }
                 EntityUtils.consume(resEntity);
             } finally {
-                httpClient.close();
+                response.close();
             }
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try {
+                httpClient.close();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
     }
 
@@ -259,22 +268,22 @@ public class HttpClientSendHttpRequest {
 
         Map<String, String> textMap = new LinkedHashMap<>();
         textMap.put("userId", "1001639541");
-        textMap.put("userName", "18128866178");
-        textMap.put("password", "yyg123abc@zl");
-        textMap.put("idCard", "450803198910206490");
-        textMap.put("bankCode", "10244");
-        textMap.put("payPassWord", "10244");
-        textMap.put("urPayPassword", "10244");
-        textMap.put("bankName", "10244");
-        textMap.put("accountName", "10244");
-        textMap.put("phone", "18888888888");
+        textMap.put("userName", "13800000000");
+        textMap.put("password", "testPassword");
+        textMap.put("idCard", "000000000000000000");
+        textMap.put("bankCode", "0000");
+        textMap.put("payPassWord", "0000");
+        textMap.put("urPayPassword", "0000");
+        textMap.put("bankName", "testBank");
+        textMap.put("accountName", "testAccount");
+        textMap.put("phone", "13800000000");
         textMap.put("billType", "01");
         textMap.put("pageSize", "10");
         textMap.put("pageNo", "1");
         // textMap.put("umId", "1");
         textMap.put("umRead", "01");
         // textMap.put("umStatus", "00");
-        textMap.put("password", "qwer123456");
+        textMap.put("password", "testPassword");
 
         HttpClientSendHttpRequest.sendPostForm("http://cs.ego168.cn/api/certification/billingDetails.action", textMap);
         // HttpClientSendHttpRequest.SendHttpUploadFile("http://localhost/api/certification/uploadUsercertification.action",fileMap,textMap);

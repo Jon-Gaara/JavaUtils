@@ -1,6 +1,6 @@
 package com.jon.bytecode.asm.proxy;
 
-import jdk.internal.org.objectweb.asm.Type;
+import org.objectweb.asm.Type;
 import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.Label;
 import org.objectweb.asm.MethodVisitor;
@@ -40,8 +40,8 @@ public class MyProxyFactory {
         } else if (returnType == int.class) {
             // 先将invoke方法返回值由Object转成Integer类型
             methodVisitor.visitTypeInsn(CHECKCAST, Type.getInternalName(Integer.class));
-            // 调用Integer的intValue方法
-            methodVisitor.visitMethodInsn(INVOKESPECIAL, Type.getInternalName(Integer.class), "intValue", "()I", false);
+            // 调用Integer的intValue方法（公开实例方法必须用 INVOKEVIRTUAL）
+            methodVisitor.visitMethodInsn(INVOKEVIRTUAL, Type.getInternalName(Integer.class), "intValue", "()I", false);
             methodVisitor.visitInsn(IRETURN);
         } else {
             methodVisitor.visitTypeInsn(CHECKCAST, Type.getInternalName(returnType));
@@ -99,7 +99,7 @@ public class MyProxyFactory {
                                 methodVisitor.visitInsn(ICONST_3);
                                 break;
                             default:
-                                methodVisitor.visitVarInsn(BIPUSH, i);
+                                methodVisitor.visitVarInsn(BIPUSH, j);
                                 break;
                         }
                         methodVisitor.visitLdcInsn(methodParameterTypes[j].getName());
@@ -178,7 +178,7 @@ public class MyProxyFactory {
                             methodVisitor.visitInsn(ICONST_3);
                             break;
                         default:
-                            methodVisitor.visitVarInsn(BIPUSH, i - 1);
+                            methodVisitor.visitVarInsn(BIPUSH, j - 1);
                     }
                     // 暂不考虑参数类型为基本类型的情况
                     methodVisitor.visitVarInsn(ALOAD, j);

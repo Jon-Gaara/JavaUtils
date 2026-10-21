@@ -24,10 +24,10 @@ public class FtpContext {
 
     private static FTPClient ftpClient = new FTPClient();
     private static String encoding = System.getProperty("file.encoding");
-    private static String url = "127.0.0.1";
-    private static int port = 21;
-    private static String username = "FTPTest";
-    private static String password = "123456";
+    private static String url = System.getenv().getOrDefault("FTP_HOST", "127.0.0.1");
+    private static int port = Integer.parseInt(System.getenv().getOrDefault("FTP_PORT", "21"));
+    private static String username = System.getenv("FTP_USERNAME");
+    private static String password = System.getenv("FTP_PASSWORD");
     private static String localFTPPath = "D:/";
 
     /**

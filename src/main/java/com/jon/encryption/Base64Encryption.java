@@ -1,5 +1,7 @@
 package com.jon.encryption;
 
+import java.nio.charset.StandardCharsets;
+
 import org.apache.commons.codec.binary.Base64;
 
 public class Base64Encryption {
@@ -23,19 +25,19 @@ public class Base64Encryption {
     }
 
     /**
-     * Base64加密
+     * Base64加密。输出单行纯 ASCII；encodeBase64Chunked 会插 CRLF，破坏 JSON/Header/URL 场景
      */
     public static String encode(String binaryData, String charType) throws Exception {
         byte[] encode;
         if (charType == null) {
-            encode = binaryData.getBytes();
+            encode = binaryData.getBytes(StandardCharsets.UTF_8);
         } else {
             encode = binaryData.getBytes(charType);
         }
-        return new String(Base64.encodeBase64Chunked(encode));
+        return Base64.encodeBase64String(encode);
     }
 
     public static String encode(byte[] binaryData) throws Exception {
-        return new String(Base64.encodeBase64Chunked(binaryData));
+        return Base64.encodeBase64String(binaryData);
     }
 }

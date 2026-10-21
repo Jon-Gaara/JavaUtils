@@ -22,8 +22,8 @@ public class JDBCUtil {
      * value if you want to utilize time zone support. mysql-connector-java版本过高 建议使用低版本
      */
     private static final String DRIVER = "com.mysql.jdbc.Driver";
-    private static final String USER_NAME = "root";
-    private static final String PASS_WORD = "root";
+    private static final String USER_NAME = System.getenv().getOrDefault("DB_USERNAME", "root");
+    private static final String PASS_WORD = System.getenv().getOrDefault("DB_PASSWORD", "root");
     private static final String URL =
         "jdbc:mysql://localhost:3306/testdatebase?useUnicode=true&characterEncoding=UTF-8";
     private static Connection conn = null;
@@ -73,35 +73,34 @@ public class JDBCUtil {
             list.add(userId);
         }
         try {
-            // 创建PreparedStatement,预编译sql
-            PreparedStatement state = conn.prepareStatement(sql.toString());
-            for (int i = 0; i < list.size(); i++) {
-                // 设置值
-                state.setObject(i + 1, list.get(i));
-            }
-			// 执行sql语句
-            ResultSet rs = state.executeQuery();
-			//判断数据库是否支持可滚动
-            // conn.getMetaData().supportsResultSetType(rs.getType());
-			//判断数据库是否支持可更新
-            // conn.getMetaData().supportsResultSetConcurrency(rs.getType(),rs.getConcurrency());
-			// 获取总列数
-            int col = rs.getMetaData().getColumnCount();
-			// 游标滚动到最后一行
-            rs.last();
-			// 获取总行数
-            int row = rs.getRow();
-			// 游标滚动到第一行之前
-            rs.beforeFirst();
-            value = new String[row][col];
-            int j = 0;
-			// 获取行数
-            while (rs.next()) {
-				// 获取列值
-                for (int i = 1; i <= col; i++) {
-                    value[j][i - 1] = rs.getString(i);
+            // 创建PreparedStatement,预编译sql；rs.last()/beforeFirst() 需要可滚动结果集
+            try (PreparedStatement state = conn.prepareStatement(sql.toString(),
+                ResultSet.TYPE_SCROLL_INSENSITIVE, ResultSet.CONCUR_READ_ONLY)) {
+                for (int i = 0; i < list.size(); i++) {
+                    // 设置值
+                    state.setObject(i + 1, list.get(i));
                 }
-                j++;
+				// 执行sql语句
+                try (ResultSet rs = state.executeQuery()) {
+                    // 获取总列数
+                    int col = rs.getMetaData().getColumnCount();
+                    // 游标滚动到最后一行
+                    rs.last();
+                    // 获取总行数
+                    int row = rs.getRow();
+                    // 游标滚动到第一行之前
+                    rs.beforeFirst();
+                    value = new String[row][col];
+                    int j = 0;
+                    // 获取行数
+                    while (rs.next()) {
+                        // 获取列值
+                        for (int i = 1; i <= col; i++) {
+                            value[j][i - 1] = rs.getString(i);
+                        }
+                        j++;
+                    }
+                }
             }
         } catch (SQLException e) {
             e.printStackTrace();
@@ -149,6 +148,8 @@ public class JDBCUtil {
 				prepStatement.executeBatch();
                 conn.commit();
                 conn.close();
+                // 共享的静态连接已关闭，必须清空，否则后续调用复用已关闭连接
+                conn = null;
             }
         } catch (Exception e) {
             e.printStackTrace();

@@ -48,9 +48,12 @@ public class SAXUtils {
         SAXParserFactory factory = SAXParserFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+        // 禁用 DTD，防 billion-laughs 实体扩展
+        factory.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
         SAXParser parser = factory.newSAXParser();
-        InputStream in = new URL(url).openStream();
-        parser.parse(in, handler);
+        try (InputStream in = new java.net.URL(url).openStream()) {
+            parser.parse(in, handler);
+        }
     }
 
     public void StAXResolve(String str) throws Exception {
@@ -61,16 +64,20 @@ public class SAXUtils {
             urlString = str;
         }
         URL url = new URL(urlString);
-        InputStream in = url.openStream();
         XMLInputFactory factory = XMLInputFactory.newInstance();
-        XMLStreamReader reader = factory.createXMLStreamReader(in);
-        while (reader.hasNext()) {
-            int event = reader.next();
-            if (event == XMLStreamConstants.START_ELEMENT) {
-                if ("a".equals(reader.getLocalName())) {
-                    String href = reader.getAttributeValue(null, "href");
-                    if (StringUtils.isNotEmpty(href)) {
-                        System.out.println(href);
+        // 禁用 DTD 与外部实体，防止远程文档 XXE
+        factory.setProperty(XMLInputFactory.SUPPORT_DTD, false);
+        factory.setProperty(XMLInputFactory.IS_SUPPORTING_EXTERNAL_ENTITIES, false);
+        try (InputStream in = url.openStream()) {
+            XMLStreamReader reader = factory.createXMLStreamReader(in);
+            while (reader.hasNext()) {
+                int event = reader.next();
+                if (event == XMLStreamConstants.START_ELEMENT) {
+                    if ("a".equals(reader.getLocalName())) {
+                        String href = reader.getAttributeValue(null, "href");
+                        if (StringUtils.isNotEmpty(href)) {
+                            System.out.println(href);
+                        }
                     }
                 }
             }

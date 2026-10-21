@@ -111,8 +111,12 @@ public class JavaSendMailForSSL {
             // 保存本地测试
             // message.writeTo(new FileOutputStream("D:\\1.eml"));
             // 发送
-            transport.connect(SMTP_HOST_NAME, USER_NAME, PASSWORD);
-            transport.sendMessage(message, message.getAllRecipients());
+            try {
+                transport.connect(SMTP_HOST_NAME, USER_NAME, PASSWORD);
+                transport.sendMessage(message, message.getAllRecipients());
+            } finally {
+                transport.close();
+            }
         } catch (Exception e) {
             logger.error(e.getMessage());
         }

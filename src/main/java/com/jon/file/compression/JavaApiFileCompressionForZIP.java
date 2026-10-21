@@ -54,10 +54,10 @@ public class JavaApiFileCompressionForZIP {
         }
         for (File newFile : files) {
             if (newFile.isDirectory()) {
-                // 不带目录压缩
-                pathName = newFile.getPath().substring(basePath.length() + 1) + File.separator;
+                // ZIP 规范要求条目内路径用 '/' 分隔，用 File.separator 在 Windows 上会丢目录结构
+                pathName = newFile.getPath().substring(basePath.length() + 1).replace(File.separatorChar, '/') + "/";
                 zipOut.putNextEntry(new ZipEntry(pathName));
-                zipFile(file, basePath, zipOut);
+                zipFile(newFile, basePath, zipOut);
             } else {
                 pathName = newFile.getPath();
                 try (InputStream is = new FileInputStream(pathName);

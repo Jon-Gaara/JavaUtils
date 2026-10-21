@@ -21,6 +21,10 @@ public class JDOMUtils {
         Map<String, String> m = new HashMap<>();
         InputStream in = new ByteArrayInputStream(strxml.getBytes());
         SAXBuilder builder = new SAXBuilder();
+        // 禁用 DTD 与外部实体，防止 XXE
+        builder.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+        builder.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        builder.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
         Document doc = builder.build(in);
         Element root = doc.getRootElement();
         List<?> list = root.getChildren();

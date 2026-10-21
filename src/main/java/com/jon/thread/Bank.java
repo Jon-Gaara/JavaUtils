@@ -13,6 +13,8 @@ public class Bank implements Serializable {
     private ReentrantReadWriteLock rwl = new ReentrantReadWriteLock();
     private Lock readLock = rwl.readLock();
     private Lock writeLock = rwl.writeLock();
+    // Lock 对象本身不能 wait/notify，必须用它创建的 Condition 来等待/唤醒
+    private Condition sufficientFunds3 = writeLock.newCondition();
     private static final int aaa = 111;
     private static final long bbbb = 22222;
     private static final double cccc = 33333d;
@@ -60,17 +62,17 @@ public class Bank implements Serializable {
         writeLock.lock();
         try {
             while (accounts[from] < amount) {
-                writeLock.wait();
+                sufficientFunds3.await();
             }
             System.out.println(Thread.currentThread());
             accounts[from] -= amount;
             System.out.printf(" %10.2f from %d to %d", amount, from, to);
             accounts[to] += amount;
             System.out.printf(" Total Balance: %10.2f%n", getTotalBalance3());
+            sufficientFunds3.signalAll();
         } finally {
             writeLock.unlock();
         }
-        writeLock.notifyAll();
     }
 
     private double getTotalBalance() {

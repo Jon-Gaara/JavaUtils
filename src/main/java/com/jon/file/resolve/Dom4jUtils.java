@@ -21,13 +21,34 @@ public class Dom4jUtils {
 
     private Document document;
 
+    public Document getDocument() {
+        return document;
+    }
+
     public void getXMLDocumentForFile(String filePath) throws DocumentException {
         SAXReader saxReader = new SAXReader();
+        // 禁用 DTD 与外部实体，防止 XXE（文件泄露/SSRF/billion-laughs）
+        try {
+            saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (Exception e) {
+            throw new DocumentException("无法加固 SAXReader: " + e.getMessage());
+        }
         document = saxReader.read(new File(filePath));
     }
 
     public void getXMLDocument(String xmlString) throws Exception {
-        document = DocumentHelper.parseText(xmlString);
+        SAXReader saxReader = new SAXReader();
+        // 同上，parseText 走默认工厂时外部实体同样是开着的
+        try {
+            saxReader.setFeature("http://apache.org/xml/features/disallow-doctype-decl", true);
+            saxReader.setFeature("http://xml.org/sax/features/external-general-entities", false);
+            saxReader.setFeature("http://xml.org/sax/features/external-parameter-entities", false);
+        } catch (Exception e) {
+            throw new DocumentException("无法加固 SAXReader: " + e.getMessage());
+        }
+        document = saxReader.read(new java.io.StringReader(xmlString));
         this.getXMLElement();
     }
 

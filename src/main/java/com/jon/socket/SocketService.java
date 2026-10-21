@@ -29,14 +29,17 @@ public class SocketService {
                     info = dataInput.readUTF();
                     System.out.println("客户端 :" + info);
                     if ("bye".equals(info)) {
-                        System.out.println("对方下线，程序退出!");
-                        System.exit(0);
+                        System.out.println("对方下线");
+                        break;
                     }
                 }
-            } catch (Exception e) {
-                if (e.toString().contains("java.net.SocketException: Connection reset")) {
-                    System.out.println("对方下线，程序退出!");
-                    System.exit(0);
+            } catch (IOException e) {
+                System.out.println("客户端连接结束: " + e.getMessage());
+            } finally {
+                // 结束本连接的读线程时关闭底层 socket，写线程会随之退出
+                try {
+                    dataInput.close();
+                } catch (IOException ignored) {
                 }
             }
         }
@@ -58,14 +61,19 @@ public class SocketService {
                 BufferedReader br = new BufferedReader(isr);
                 while (true) {
                     String thisInfo = br.readLine();
-                    if ("bye".equals(thisInfo) || thisInfo == null) {
-                        System.out.println("对方下线，程序退出!");
-                        System.exit(0);
+                    if (thisInfo == null || "bye".equals(thisInfo)) {
+                        System.out.println("对方下线");
+                        break;
                     }
                     data.writeUTF(thisInfo);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("本端写线程结束: " + e.getMessage());
+            } finally {
+                try {
+                    data.close();
+                } catch (IOException ignored) {
+                }
             }
         }
     }
@@ -80,24 +88,19 @@ public class SocketService {
         @Override
 		public void run() {
             try {
-                try {
-                    OutputStream output = socket.getOutputStream();
-                    InputStream is = socket.getInputStream();
-                    DataOutputStream data = new DataOutputStream(output);
-                    DataInputStream dis = new DataInputStream(is);
+                OutputStream output = socket.getOutputStream();
+                InputStream is = socket.getInputStream();
+                DataOutputStream data = new DataOutputStream(output);
+                DataInputStream dis = new DataInputStream(is);
 
-                    Thread t1 = new Thread(new SocketService().new MyServerReader(dis));
-                    t1.setDaemon(true);
-                    Thread t2 = new Thread(new SocketService().new MyServerWrite(data));
-                    t2.setDaemon(true);
+                Thread t1 = new Thread(new SocketService().new MyServerReader(dis));
+                t1.setDaemon(true);
+                Thread t2 = new Thread(new SocketService().new MyServerWrite(data));
+                t2.setDaemon(true);
 
-                    t1.start();
-                    t2.start();
-                } finally {
-                    if (socket != null) {
-                        socket.close();
-                    }
-                }
+                t1.start();
+                t2.start();
+                // socket 由读/写线程结束时各自关闭，不能在 start() 后立刻关闭
             } catch (Exception e) {
                 e.printStackTrace();
             }

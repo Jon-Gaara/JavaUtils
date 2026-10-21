@@ -24,7 +24,6 @@ public class GenerateClass {
         //自己计算方法的局部变量表和操作数栈的大小
         ClassWriter classWriter = new ClassWriter(0);
         classWriter.visit(Opcodes.V1_8, ACC_PUBLIC,className.replace(".","/"),signature,Object.class.getName().replace(".","/"),null);
-        classWriter.visitEnd();
 
         //生成init方法
         MethodVisitor methodVisitor = classWriter.visitMethod(ACC_PUBLIC,"<init>","()V",null,null);
@@ -41,6 +40,10 @@ public class GenerateClass {
         if(isGenerateMain){
             MethodVisitor mainMethodVisitor = classWriter.visitMethod(ACC_PUBLIC|ACC_STATIC,"main","([Ljava/lang/String;)V",null,null);
             mainMethodVisitor.visitCode();
+            mainMethodVisitor.visitInsn(RETURN);
+            // 空方法体：maxStack=0, maxLocals=1(String[] args)
+            mainMethodVisitor.visitMaxs(0,1);
+            mainMethodVisitor.visitEnd();
         }
 
         FieldVisitor fieldVisitor = classWriter.visitField(ACC_PRIVATE|ACC_STATIC|ACC_FINAL,"age","I",null,100);
@@ -49,6 +52,7 @@ public class GenerateClass {
         FieldVisitor fieldVisitor1 = classWriter.visitField(ACC_PUBLIC,"name","Ljava/lang/String;",null,null);
         fieldVisitor1.visitAnnotation("Llombok/Getter;",false);
         fieldVisitor.visitEnd();
+        classWriter.visitEnd();
         byte[] byteCode = classWriter.toByteArray();
         FileUtil.writeBytes(byteCode,className.replace(".", "/")+".class");
     }

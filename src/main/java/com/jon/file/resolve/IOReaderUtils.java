@@ -78,14 +78,15 @@ public class IOReaderUtils {
      * @throws IOException
      */
     public static void ZipFileIterator(Path path) throws IOException {
-        FileSystem fileSystem = FileSystems.newFileSystem(path, null);
-        Files.walkFileTree(fileSystem.getPath("/"), new SimpleFileVisitor<Path>() {
-            @Override
-			public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
-                System.out.println(path);
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        try (FileSystem fileSystem = FileSystems.newFileSystem(path, null)) {
+            Files.walkFileTree(fileSystem.getPath("/"), new SimpleFileVisitor<Path>() {
+                @Override
+				public FileVisitResult visitFile(Path path, BasicFileAttributes attrs) {
+                    System.out.println(path);
+                    return FileVisitResult.CONTINUE;
+                }
+            });
+        }
     }
 
     public static void main(String[] args) throws FileNotFoundException {

@@ -4,7 +4,6 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
@@ -101,16 +100,21 @@ public class FileCompressionFor7z {
 					final long[] sizeArray = new long[1];
 					result = item.extractSlow(data -> {
 						// Write to file
-						FileOutputStream fos;
 						try {
-							File file = new File(newFilePath+File.separator+item.getPath());
-							// error occours below
-							// file.getParentFile().mkdirs();
-							fos = new FileOutputStream(file);
-							fos.write(data);
-							fos.close();
-						} catch (FileNotFoundException e) {
-							e.printStackTrace();
+							// Zip Slip 防护：归档内路径规范化后必须仍落在目标目录内
+							File targetDir = new File(newFilePath).getCanonicalFile();
+							File file = new File(targetDir, item.getPath()).getCanonicalFile();
+							if (!file.getPath().startsWith(targetDir.getPath() + File.separator)) {
+								throw new IOException("非法归档条目路径: " + item.getPath());
+							}
+							// 嵌套目录需要先创建父目录
+							File parent = file.getParentFile();
+							if (parent != null && !parent.exists()) {
+								parent.mkdirs();
+							}
+							try (FileOutputStream fos = new FileOutputStream(file)) {
+								fos.write(data);
+							}
 						} catch (IOException e) {
 							e.printStackTrace();
 						}
