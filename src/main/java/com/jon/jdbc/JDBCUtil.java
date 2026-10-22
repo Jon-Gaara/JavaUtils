@@ -21,7 +21,7 @@ public class JDBCUtil {
      * either the server or JDBC driver (via the serverTimezone configuration property) to use a more specifc time zone
      * value if you want to utilize time zone support. mysql-connector-java版本过高 建议使用低版本
      */
-    private static final String DRIVER = "com.mysql.jdbc.Driver";
+    private static final String DRIVER = "com.mysql.cj.jdbc.Driver";
     private static final String USER_NAME = System.getenv().getOrDefault("DB_USERNAME", "root");
     private static final String PASS_WORD = System.getenv().getOrDefault("DB_PASSWORD", "root");
     private static final String URL =
