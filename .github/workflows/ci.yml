@@ -19,5 +19,5 @@ jobs:
           java-version: '8'
           cache: maven
 
-      - name: Compile
-        run: mvn -B -DskipTests compile
+      - name: Build and test
+        run: mvn -B test

@@ -71,7 +71,8 @@ byte[] bytes = MyProxyFactory.createProxyClass("TestProxy", new Class[]{MyInterf
 ## 环境
 
 - 构建：Maven（`pom.xml`），JDK 8+
-- CI：[GitHub Actions](.github/workflows/ci.yml) 每次 push / PR 自动 `mvn compile`
+- 测试：JUnit 4（`src/test/java`），`mvn test` 运行
+- CI：[GitHub Actions](.github/workflows/ci.yml) 每次 push / PR 自动 `mvn test`
 
 ## 说明
 

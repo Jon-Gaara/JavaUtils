@@ -38,7 +38,7 @@ public class DESUtil {
      * 加密String明文输入,String密文输出
      */
     public static String getEncString(String strMing) {
-        String keyString = System.getenv("DES_KEY_STRING");
+        String keyString = System.getProperty("des.key", System.getenv("DES_KEY_STRING"));
         if (keyString == null || keyString.isEmpty()) {
             throw new IllegalStateException("请先设置环境变量 DES_KEY_STRING");
         }
@@ -56,7 +56,7 @@ public class DESUtil {
      * 解密 以String密文输入,String明文输出
      */
     public static String getDesString(String strMi) {
-        String keyString = System.getenv("DES_KEY_STRING");
+        String keyString = System.getProperty("des.key", System.getenv("DES_KEY_STRING"));
         if (keyString == null || keyString.isEmpty()) {
             throw new IllegalStateException("请先设置环境变量 DES_KEY_STRING");
         }
