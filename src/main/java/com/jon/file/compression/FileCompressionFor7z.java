@@ -98,32 +98,40 @@ public class FileCompressionFor7z {
 				if (!item.isFolder()) {
 					ExtractOperationResult result;
 					final long[] sizeArray = new long[1];
-					result = item.extractSlow(data -> {
-						// Write to file
-						try {
-							// Zip Slip 防护：归档内路径规范化后必须仍落在目标目录内
-							File targetDir = new File(newFilePath).getCanonicalFile();
-							File file = new File(targetDir, item.getPath()).getCanonicalFile();
-							if (!file.getPath().startsWith(targetDir.getPath() + File.separator)) {
-								throw new IOException("非法归档条目路径: " + item.getPath());
-							}
-							// 嵌套目录需要先创建父目录
-							File parent = file.getParentFile();
-							if (parent != null && !parent.exists()) {
-								parent.mkdirs();
-							}
-							try (FileOutputStream fos = new FileOutputStream(file)) {
-								fos.write(data);
-							}
-						} catch (IOException e) {
-							e.printStackTrace();
+					// Zip Slip 防护 + 目录创建必须在 extractSlow 之前完成
+					File targetFile = null;
+					try {
+						File targetDir = new File(newFilePath).getCanonicalFile();
+						targetFile = new File(targetDir, item.getPath()).getCanonicalFile();
+						if (!targetFile.getPath().startsWith(targetDir.getPath() + File.separator)) {
+							throw new IOException("非法归档条目路径: " + item.getPath());
 						}
-						// Consume data
-						hash[0] ^= Arrays.hashCode(data);
-						sizeArray[0] += data.length;
-						//Return amount of consumed data
-						return data.length;
-					});
+						File parent = targetFile.getParentFile();
+						if (parent != null && !parent.exists()) {
+							parent.mkdirs();
+						}
+					} catch (IOException e) {
+						System.err.println("跳过条目 " + item.getPath() + ": " + e.getMessage());
+						targetFile = null;
+					}
+					if (targetFile == null) {
+						continue;
+					}
+					// 整个条目只开一个输出流：extractSlow 会按 chunk 多次回调，每次重开(截断)只会留下最后一块
+					try (FileOutputStream fos = new FileOutputStream(targetFile)) {
+						result = item.extractSlow(data -> {
+							try {
+								fos.write(data);
+							} catch (IOException e) {
+								e.printStackTrace();
+							}
+							// Consume data
+							hash[0] ^= Arrays.hashCode(data);
+							sizeArray[0] += data.length;
+							//Return amount of consumed data
+							return data.length;
+						});
+					}
 					if (result == ExtractOperationResult.OK) {
 						System.out.println(String.format("%9X | %10s | %s",
 								hash[0], sizeArray[0], item.getPath()));

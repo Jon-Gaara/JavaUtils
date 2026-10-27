@@ -25,13 +25,12 @@ public class ZipToolsForApache {
         if (!file.exists()) {
             throw new RuntimeException(srcPathName + "不存在");
         }
-        try {
-            FileOutputStream fileOut = new FileOutputStream(zipFile);
+        try (FileOutputStream fileOut = new FileOutputStream(zipFile);
             CheckedOutputStream checkOut = new CheckedOutputStream(fileOut, new CRC32());
-            ZipOutputStream zipOut = new ZipOutputStream(checkOut);
+            ZipOutputStream zipOut = new ZipOutputStream(checkOut)) {
             String baseDir = "";
             fileCompress(file, zipOut, baseDir);
-            zipOut.close();
+            zipOut.finish();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -55,11 +54,9 @@ public class ZipToolsForApache {
         }
         File[] files = file.listFiles();
         if (files != null && files.length > 0) {
-			// 递归
+			// 递归，保留目录层级：否则不同子目录下的同名文件会产生重复的 ZipEntry
             for (int i = 0; i < files.length; i++) {
-                // fileCompress(files[i],zipOut,baseDir+file.getName()+File.separator);带目录压缩
-				// 不带目录压缩
-                fileCompress(files[i], zipOut, baseDir);
+                fileCompress(files[i], zipOut, baseDir + file.getName() + "/");
             }
         }
     }
@@ -72,7 +69,13 @@ public class ZipToolsForApache {
             return;
         }
         try {
-            BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file));
+            // 目标 zip 本身位于待压缩目录内时跳过，否则会把正在写的归档读进来
+            if (file.getCanonicalPath().equals(zipFile.getCanonicalPath())) {
+                return;
+            }
+        } catch (Exception ignored) {
+        }
+        try (BufferedInputStream bis = new BufferedInputStream(new FileInputStream(file))) {
             ZipEntry zip = new ZipEntry(baseDir + file.getName());
             zipOut.putNextEntry(zip);
             int count;
@@ -80,7 +83,6 @@ public class ZipToolsForApache {
             while ((count = bis.read(data, 0, BUFFER)) != -1) {
                 zipOut.write(data, 0, count);
             }
-            bis.close();
         } catch (Exception e) {
             e.printStackTrace();
         }

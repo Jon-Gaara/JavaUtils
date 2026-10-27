@@ -48,7 +48,8 @@ public class SFTPContext {
             channel.connect();
             sftp = (ChannelSftp)channel;
         } catch (Exception e) {
-            e.printStackTrace();
+            // 返回 null 只会把 NPE 推迟到调用方，这里直接抛出保留真实原因
+            throw new IllegalStateException("SFTP 连接失败: " + host + ":" + port, e);
         }
         return sftp;
     }
@@ -82,7 +83,8 @@ public class SFTPContext {
             // sftp.cd(directory);
             File file = new File(saveFile);
             File fileParent = file.getParentFile();
-            if (!fileParent.exists()) {
+            // saveFile 是纯文件名时 getParentFile() 返回 null
+            if (fileParent != null && !fileParent.exists()) {
                 fileParent.mkdirs();
             }
             if (!file.exists()) {

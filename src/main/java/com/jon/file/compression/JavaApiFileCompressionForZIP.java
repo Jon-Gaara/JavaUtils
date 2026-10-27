@@ -17,9 +17,13 @@ import java.util.zip.ZipOutputStream;
  */
 public class JavaApiFileCompressionForZIP {
 
+    /** 正在写入的目标 zip，用于排除"压缩目录里包含目标 zip 自身"的自包含 */
+    private File currentZipFile;
+
     public File FileCompressionForZIP(String dataSource, String zipFilePath) throws IOException {
         File file = new File(dataSource);
         File zipFile = new File(zipFilePath);
+        currentZipFile = zipFile;
         try (OutputStream out = new FileOutputStream(zipFile); BufferedOutputStream buf = new BufferedOutputStream(out);
             // jdk1.7支持
             ZipOutputStream zipOut = new ZipOutputStream(buf, StandardCharsets.UTF_8)) {
@@ -59,12 +63,17 @@ public class JavaApiFileCompressionForZIP {
                 zipOut.putNextEntry(new ZipEntry(pathName));
                 zipFile(newFile, basePath, zipOut);
             } else {
+                // 目标 zip 位于待压缩目录内时跳过，避免边写边读自身
+                if (currentZipFile != null && newFile.getCanonicalPath().equals(currentZipFile.getCanonicalPath())) {
+                    continue;
+                }
                 pathName = newFile.getPath();
                 try (InputStream is = new FileInputStream(pathName);
                     BufferedInputStream buffer = new BufferedInputStream(is)) {
-                    // zipOut.putNextEntry(new ZipEntry(pathName));带目录压缩
-                    // 不带目录压缩
-                    zipOut.putNextEntry(new ZipEntry(newFile.getName()));
+                    // 条目名保留相对目录结构并使用 '/'，否则不同目录同名文件会互相覆盖
+                    String entryName = newFile.getPath().substring(basePath.length() + 1)
+                        .replace(File.separatorChar, '/');
+                    zipOut.putNextEntry(new ZipEntry(entryName));
                     // zipOut.setLevel(9);设置zip压缩级别 0~9
                     while ((length = buffer.read(buff)) != -1) {
                         zipOut.write(buff, 0, length);

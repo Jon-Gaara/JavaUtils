@@ -14,7 +14,6 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.commons.io.IOUtils;
 import org.apache.commons.net.ftp.FTP;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPFile;
@@ -22,13 +21,49 @@ import org.apache.commons.net.ftp.FTPReply;
 
 public class FtpContext {
 
-    private static FTPClient ftpClient = new FTPClient();
     private static String encoding = System.getProperty("file.encoding");
     private static String url = System.getenv().getOrDefault("FTP_HOST", "127.0.0.1");
     private static int port = Integer.parseInt(System.getenv().getOrDefault("FTP_PORT", "21"));
     private static String username = System.getenv("FTP_USERNAME");
     private static String password = System.getenv("FTP_PASSWORD");
     private static String localFTPPath = "D:/";
+
+    /**
+     * 每次调用创建独立连接（静态共享 client 会被并发调用互相断开）
+     */
+    private static FTPClient connect() throws IOException {
+        FTPClient ftpClient = new FTPClient();
+        ftpClient.setControlEncoding(encoding);
+        if (port == 21) {
+            ftpClient.connect(url);
+        } else {
+            ftpClient.connect(url, port);
+        }
+        ftpClient.login(username, password);
+        int reply = ftpClient.getReplyCode();
+        if (!FTPReply.isPositiveCompletion(reply)) {
+            ftpClient.disconnect();
+            throw new IOException("FTP server refused connection, reply=" + reply);
+        }
+        ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
+        // 被动模式对 NAT/防火墙更友好；主动模式需要服务器回连客户端
+        ftpClient.enterLocalPassiveMode();
+        return ftpClient;
+    }
+
+    private static void disconnect(FTPClient ftpClient) {
+        if (ftpClient == null || !ftpClient.isConnected()) {
+            return;
+        }
+        try {
+            ftpClient.logout();
+        } catch (IOException ignored) {
+        }
+        try {
+            ftpClient.disconnect();
+        } catch (IOException ignored) {
+        }
+    }
 
     /**
      * Description: 向FTP服务器上传文件
@@ -41,35 +76,20 @@ public class FtpContext {
      */
     public static boolean uploadFile(String path, String filename, InputStream input) throws IOException {
         boolean result = false;
-        int reply;
+        FTPClient ftpClient = connect();
         try {
-            ftpClient.connect(url, port);
-            // 登录
-            ftpClient.login(username, password);
-            ftpClient.setControlEncoding(encoding);
-            // 检验是否连接成功
-            reply = ftpClient.getReplyCode();
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                System.out.println("连接失败");
-                ftpClient.disconnect();
-                return result;
-            }
-
             // 转移工作目录至指定目录下
             boolean change = ftpClient.changeWorkingDirectory(path);
-            ftpClient.setFileType(FTP.BINARY_FILE_TYPE);
             if (change) {
-                result = ftpClient.storeFile(new String(filename.getBytes(encoding), StandardCharsets.ISO_8859_1), input);
+                result = ftpClient.storeFile(
+                    new String(filename.getBytes(encoding), StandardCharsets.ISO_8859_1), input);
                 if (result) {
                     System.out.println("上传成功!");
                 }
             }
             input.close();
-            ftpClient.logout();
         } finally {
-            if (ftpClient.isConnected()) {
-                ftpClient.disconnect();
-            }
+            disconnect(ftpClient);
         }
         return result;
     }
@@ -84,97 +104,41 @@ public class FtpContext {
      * @throws IOException
      */
     public static boolean downFile(String remotePath, String fileName, String localPath) throws IOException {
-        boolean result;
-        OutputStream is;
+        boolean result = false;
+        FTPClient ftpClient = connect();
         try {
-            int reply;
-            ftpClient.setControlEncoding(encoding);
-            /*
-             *  为了上传和下载中文文件，有些地方建议使用以下两句代替
-             *  new String(remotePath.getBytes(encoding),"iso-8859-1")转码。
-             *  经过测试，通不过。
-             */
-            // FTPClientConfig conf = new FTPClientConfig(FTPClientConfig.SYST_NT);
-            // conf.setServerLanguageCode("zh");
-            // ftpClient.configure(conf);
-            // 连接FTP服务器
-            ftpClient.connect(url, port);
-            // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
-            ftpClient.login(username, password);
-            // 设置文件传输类型为二进制
-            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            // 被动方式
-            // ftpClient.enterLocalPassiveMode();
-            // ftpClient.setSoTimeout(60 * 1000);
-            // ftpClient.setDefaultTimeout(60 * 1000);
-            // 获取ftp登录应答代码
-            reply = ftpClient.getReplyCode();
-            // 验证是否登陆成功
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                ftpClient.disconnect();
-                System.err.println("FTP server refused connection.");
-                return false;
-            }
             // 转移到FTP服务器目录至指定的目录下
             ftpClient.changeWorkingDirectory(new String(remotePath.getBytes(encoding), StandardCharsets.ISO_8859_1));
+            // 本地目标目录不存在时先创建调用方指定的 localPath（原实现只创建了硬编码的 localFTPPath）
+            File localDir = new File(localPath);
+            if (!localDir.exists()) {
+                localDir.mkdirs();
+            }
             // 获取文件列表
             FTPFile[] fs = ftpClient.listFiles();
             for (FTPFile ff : fs) {
                 if (ff == null) {
                     continue;
                 }
-                File file = new File(localFTPPath);
-                if (!file.exists()) {
-                    file.mkdir();
-                }
                 if (ff.getName().equals(fileName)) {
-                    File localFile = new File(localPath + File.separator + ff.getName());
-                    is = new FileOutputStream(localFile);
-                    ftpClient.retrieveFile(fileName, is);
-                    IOUtils.closeQuietly(is);
+                    File localFile = new File(localDir, ff.getName());
+                    try (OutputStream is = new FileOutputStream(localFile)) {
+                        // 传播真实结果，传输被拒时不能报成功
+                        result = ftpClient.retrieveFile(fileName, is);
+                    }
                 }
             }
-            ftpClient.logout();
-            result = true;
         } finally {
-            if (ftpClient.isConnected()) {
-                ftpClient.disconnect();
-            }
+            disconnect(ftpClient);
         }
         return result;
     }
 
     public static List<String> readFile(String remotePath, String fileName) {
         List<String> result = new ArrayList<>();
-        InputStream in;
-        FileWriter is;
+        FTPClient ftpClient = null;
         try {
-            int reply;
-            ftpClient.setControlEncoding(encoding);
-            // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
-            if (port == 21) {
-                ftpClient.connect(url);
-            } else {
-                ftpClient.connect(url, port);
-            }
-            // 如果采用默认端口，可以使用ftp.connect(url)的方式直接连接FTP服务器
-            ftpClient.login(username, password);
-            ftpClient.setFileType(FTPClient.FILE_STRUCTURE);
-            // 主动方式
-            ftpClient.enterLocalActiveMode();
-            // 设置文件传输类型为二进制
-            ftpClient.setFileType(FTPClient.BINARY_FILE_TYPE);
-            ftpClient.setDataTimeout(5 * 60 * 1000);
-            ftpClient.setConnectTimeout(5 * 60 * 1000);
-            ftpClient.setDefaultTimeout(5 * 60 * 1000);
-            // 获取ftp登录应答代码
-            reply = ftpClient.getReplyCode();
-            // 验证是否登陆成功
-            if (!FTPReply.isPositiveCompletion(reply)) {
-                ftpClient.disconnect();
-                System.err.println("FTP server refused connection.");
-                return result;
-            }
+            ftpClient = connect();
             // 转移到FTP服务器目录至指定的目录下
             ftpClient.changeWorkingDirectory(new String(remotePath.getBytes(encoding), StandardCharsets.ISO_8859_1));
             // 获取文件列表
@@ -189,36 +153,38 @@ public class FtpContext {
                 }
                 if (ff.getName().contains(fileName) && !ff.getName().contains("H")) {
                     File localFile = new File(localFTPPath + File.separator + ff.getName());
-                    in = ftpClient.retrieveFileStream(ff.getName());
-                    BufferedReader reader = new BufferedReader(new InputStreamReader(in));
-                    String tempString;
-                    while ((tempString = reader.readLine()) != null) {// 一次读入一行，直到读入null为文件结束
-                        result.add(tempString);
+                    // 每个文件独立的行缓冲，避免把上一个文件的内容拼进当前文件
+                    List<String> fileLines = new ArrayList<>();
+                    InputStream in = ftpClient.retrieveFileStream(ff.getName());
+                    if (in == null) {
+                        // 服务器拒绝传输或数据连接打不开时返回 null，继续读会 NPE 且控制连接错位
+                        System.err.println("无法获取文件流: " + ff.getName());
+                        continue;
+                    }
+                    try (BufferedReader reader = new BufferedReader(new InputStreamReader(in))) {
+                        String tempString;
+                        while ((tempString = reader.readLine()) != null) {
+                            fileLines.add(tempString);
+                        }
+                    } finally {
+                        // 必须调用，否则控制连接状态不一致
+                        ftpClient.completePendingCommand();
                     }
                     if (!localFile.exists()) {
                         localFile.createNewFile();
                     }
-                    is = new FileWriter(localFile);
-                    BufferedWriter bw = new BufferedWriter(is);
-                    for (String str : result) {
-                        bw.write(str + System.getProperty("line.separator"));
+                    try (BufferedWriter bw = new BufferedWriter(new FileWriter(localFile))) {
+                        for (String str : fileLines) {
+                            bw.write(str + System.getProperty("line.separator"));
+                        }
                     }
-                    IOUtils.closeQuietly(reader);
-                    IOUtils.closeQuietly(bw);
-                    ftpClient.completePendingCommand();
+                    result.addAll(fileLines);
                 }
             }
-            ftpClient.logout();
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
-            if (ftpClient.isConnected()) {
-                try {
-                    ftpClient.disconnect();
-                } catch (IOException ioe) {
-                    // do nothing
-                }
-            }
+            disconnect(ftpClient);
         }
         return result;
     }

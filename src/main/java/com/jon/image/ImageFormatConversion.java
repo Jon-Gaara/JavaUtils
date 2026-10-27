@@ -23,23 +23,31 @@ public class ImageFormatConversion {
     
     public static void imageFormat(String fileName,OutputStream out,String fileType,String formatFileType) throws Exception{
     	File file2 = new File(fileName);
-	FileInputStream fis = new FileInputStream(file2);
-	Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(fileType);
-	ImageInputStream iis = ImageIO.createImageInputStream(fis);
-	while (readers.hasNext()){
-		ImageReader reader = (ImageReader)readers.next();
-		reader.setInput(iis,true);
-		BufferedImage buffer = reader.read(0);
-		ImageIO.write(buffer,formatFileType,out); 
-	}
+		try (FileInputStream fis = new FileInputStream(file2);
+			ImageInputStream iis = ImageIO.createImageInputStream(fis)) {
+			Iterator<ImageReader> readers = ImageIO.getImageReadersByFormatName(fileType);
+			// 只取第一个匹配的 reader：遍历所有 reader 会把多张图连续写进同一个输出流
+			if (!readers.hasNext()) {
+				throw new IllegalArgumentException("不支持的图片类型: " + fileType);
+			}
+			ImageReader reader = readers.next();
+			try {
+				reader.setInput(iis, true);
+				BufferedImage buffer = reader.read(0);
+				ImageIO.write(buffer, formatFileType, out);
+			} finally {
+				reader.dispose();
+			}
+		}
     }
     
     public static void main(String[] args) throws Exception {
     	String fileName="d:\\temporaryFile.pbm";
     	String formatFile = "d:\\temporaryFile.jpg";
-    	FileOutputStream out = new FileOutputStream(new File(formatFile));
     	String fileType="pnm";
     	String formatFileType="jpg";
-    	ImageFormatConversion.imageFormat(fileName,out,fileType,formatFileType);
+    	try (FileOutputStream out = new FileOutputStream(new File(formatFile))) {
+    		ImageFormatConversion.imageFormat(fileName, out, fileType, formatFileType);
+    	}
 	}
 }

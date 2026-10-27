@@ -3,6 +3,7 @@ package com.jon.file.encryption;
 import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
+import java.security.SecureRandom;
 import java.util.Arrays;
 import javax.crypto.Cipher;
 import javax.crypto.SecretKey;
@@ -10,55 +11,59 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 /**
- * AES文件加密
+ * AES文件加密<br>
+ * 每次加密生成随机 IV 并置于密文头部（CBC 固定 IV 会导致确定性加密，泄露明文相等性）
  */
 public class FileEncryptionForAES {
 
-    /**
-     * AES加密
-     */
-    public static byte[] encodeAES(byte[] key, byte[] content) throws Exception {
-        // 不是16的倍数的，补足
-        int base = 16;
-        if (key.length % base != 0) {
-            int groups = key.length / base + (key.length % base != 0 ? 1 : 0);
-            byte[] temp = new byte[groups * base];
-            Arrays.fill(temp, (byte)0);
+    private static final int BLOCK_SIZE = 16;
+
+    private static SecretKey normalizeKey(byte[] key) {
+        if (key == null) {
+            throw new IllegalArgumentException("key 不能为空");
+        }
+        if (key.length % BLOCK_SIZE != 0) {
+            int groups = key.length / BLOCK_SIZE + 1;
+            byte[] temp = new byte[groups * BLOCK_SIZE];
             System.arraycopy(key, 0, temp, 0, key.length);
             key = temp;
         }
-
-        SecretKey secretKey = new SecretKeySpec(key, "AES");
-        IvParameterSpec iv = new IvParameterSpec(new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        cipher.init(Cipher.ENCRYPT_MODE, secretKey, iv);
-        byte[] tgtBytes = cipher.doFinal(content);
-        return tgtBytes;
+        if (key.length != 16 && key.length != 24 && key.length != 32) {
+            throw new IllegalArgumentException("AES 密钥长度必须是 16/24/32 字节(补零后为 " + key.length + ")");
+        }
+        return new SecretKeySpec(key, "AES");
     }
 
     /**
-     * AES解密
+     * AES加密，输出 = 16 字节随机 IV + 密文
+     */
+    public static byte[] encodeAES(byte[] key, byte[] content) throws Exception {
+        SecretKey secretKey = normalizeKey(key);
+        byte[] iv = new byte[BLOCK_SIZE];
+        new SecureRandom().nextBytes(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
+        byte[] cipherText = cipher.doFinal(content);
+        byte[] result = Arrays.copyOf(iv, BLOCK_SIZE + cipherText.length);
+        System.arraycopy(cipherText, 0, result, BLOCK_SIZE, cipherText.length);
+        return result;
+    }
+
+    /**
+     * AES解密，密文前 16 字节为 IV
      * 
      * @param key 密钥信息
      * @param content 待加密信息
      */
     public static byte[] decodeAES(byte[] key, byte[] content) throws Exception {
-        // 不是16的倍数的，补足
-        int base = 16;
-        if (key.length % base != 0) {
-            int groups = key.length / base + (key.length % base != 0 ? 1 : 0);
-            byte[] temp = new byte[groups * base];
-            Arrays.fill(temp, (byte)0);
-            System.arraycopy(key, 0, temp, 0, key.length);
-            key = temp;
+        if (content == null || content.length <= BLOCK_SIZE) {
+            throw new IllegalArgumentException("密文长度非法");
         }
-
-        SecretKey secretKey = new SecretKeySpec(key, "AES");
-        IvParameterSpec iv = new IvParameterSpec(new byte[] {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0});
+        SecretKey secretKey = normalizeKey(key);
+        IvParameterSpec iv = new IvParameterSpec(content, 0, BLOCK_SIZE);
         Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
         cipher.init(Cipher.DECRYPT_MODE, secretKey, iv);
-        byte[] tgtBytes = cipher.doFinal(content);
-        return tgtBytes;
+        return cipher.doFinal(content, BLOCK_SIZE, content.length - BLOCK_SIZE);
     }
 
     /**
