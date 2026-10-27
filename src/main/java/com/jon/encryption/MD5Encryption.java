@@ -34,7 +34,6 @@ public class MD5Encryption {
      * @return
      */
     public static String getMD5(String message, String messageType, String codeFormat) {
-        String md5str = "";
         try {
             // 1 创建一个提供信息摘要算法的对象，初始化为md5算法对象
             MessageDigest md = MessageDigest.getInstance(messageType);
@@ -51,10 +50,10 @@ public class MD5Encryption {
             byte[] buff = md.digest();
 
             // 4 把数组每一字节（一个字节占八位）换成16进制连成md5字符串
-            md5str = bytesToHex(buff);
+            return bytesToHex(buff);
         } catch (Exception e) {
-            e.printStackTrace();
+            // 返回空串会让失败与合法摘要无法区分
+            throw new IllegalStateException("摘要计算失败: " + messageType, e);
         }
-        return md5str;
     }
 }

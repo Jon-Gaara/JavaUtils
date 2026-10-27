@@ -1,15 +1,11 @@
 package com.jon.file.compression;
 
-import java.io.BufferedInputStream;
-import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.RandomAccessFile;
 import java.util.Arrays;
 
-import com.google.zxing.aztec.decoder.Decoder;
 import net.sf.sevenzipjbinding.ExtractOperationResult;
 import net.sf.sevenzipjbinding.IInArchive;
 import net.sf.sevenzipjbinding.SevenZip;
@@ -28,50 +24,11 @@ public class FileCompressionFor7z {
 	 * @throws Exception 
 	 */
 	public static void lzmaZip(String fileName,String newFilePath) throws Exception{
-		/*File file = new File(fileName);
-		File newFile = new File(newFilePath);
-		BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
-		BufferedOutputStream outStream = new BufferedOutputStream(new FileOutputStream(newFile));
-		boolean eos = true;
-		SevenZip.Compression.LZMA.Encoder encoder = new Encoder();
-		encoder.SetEndMarkerMode(eos);
-		encoder.WriteCoderProperties(outStream);
-		long fileSize = fileName.length();
-		if (eos){
-			fileSize = -1;
-		};
-		for (int i = 0; i < 8; i++) {
-			outStream.write((int) (fileSize >>> (8 * i)) & 0xFF);
-		};
-		encoder.Code(inStream, outStream, -1, -1, null);*/
+		throw new UnsupportedOperationException("lzmaZip 尚未实现");
 	}
 	
 	public static void lzmaZip2(String fileName,String newFilePath) throws Exception{
-		/*File file = new File(fileName);
-		File newFile = new File(newFilePath);
-		BufferedInputStream inStream = new BufferedInputStream(new FileInputStream(file));
-		BufferedOutputStream outStream = new BufferedOutputStream(new FileOutputStream(newFile));
-		int propertiesSize = 5;
-		byte[] fileByte = new byte[propertiesSize];
-		if(inStream.read(fileByte, 0, propertiesSize)!=propertiesSize){
-			throw new Exception("input .lzma file is to short");
-		}
-		Decoder decode = new Decoder();
-		if(!decode.SetDecoderProperties(fileByte)){
-			throw new Exception("Incorrect stream properties");
-		};
-		long outSize = 0;
-		for(int i=0;i<0;i++){
-			int v = inStream.read();
-			if(v<0) throw new Exception("Can't read stream size");
-			outSize |=((long)v) << (8*i);
-		}
-		if(!decode.Code(inStream, outStream, outSize)){
-			throw new Exception("Error in data stream");
-		}
-		outStream.flush();
-		outStream.close();
-		inStream.close();*/
+		throw new UnsupportedOperationException("lzmaZip2 尚未实现");
 	}
 	
 	/**
@@ -143,7 +100,8 @@ public class FileCompressionFor7z {
 		} catch (Exception e) {
 			System.err.println("Error occurs: " + e);
 			e.printStackTrace();
-			System.exit(1);
+			// 工具类不能终止宿主 JVM，交给调用方处理
+			throw new IllegalStateException("7z 解压失败: " + filePath, e);
 		} finally {
 			if (inArchive != null) {
 				try {

@@ -1,11 +1,12 @@
 package com.jon.file.encryption;
 
-import java.io.ByteArrayOutputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.security.SecureRandom;
 import java.util.Arrays;
 import javax.crypto.Cipher;
+import javax.crypto.CipherInputStream;
+import javax.crypto.CipherOutputStream;
 import javax.crypto.SecretKey;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -67,109 +68,53 @@ public class FileEncryptionForAES {
     }
 
     /**
-     * 加密文件
+     * 加密文件（流式，不把整个文件读进内存）：输出 = IV + 密文
      * 
      * @param key 密钥
      * @param plainFilePath 明文文件路径路径
      * @param secretFilePath 密文文件路径
      */
     public static void encodeAESFile(byte[] key, String plainFilePath, String secretFilePath) throws Exception {
-        FileInputStream fis = null;
-        ByteArrayOutputStream bos = null;
-        FileOutputStream fos = null;
-        try {
-
-            fis = new FileInputStream(plainFilePath);
-            bos = new ByteArrayOutputStream(fis.available());
-
-            byte[] buffer = new byte[1024];
-            int count = 0;
-            while ((count = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, count);
-            }
-            bos.flush();
-
-            byte[] bytes = encodeAES(key, bos.toByteArray());
-
-            fos = new FileOutputStream(secretFilePath);
-            fos.write(bytes);
-            fos.flush();
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                    e.getLocalizedMessage();
-                }
-            }
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (Exception e) {
-                    e.getLocalizedMessage();
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                    e.getLocalizedMessage();
+        SecretKey secretKey = normalizeKey(key);
+        byte[] iv = new byte[BLOCK_SIZE];
+        new SecureRandom().nextBytes(iv);
+        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        cipher.init(Cipher.ENCRYPT_MODE, secretKey, new IvParameterSpec(iv));
+        try (FileInputStream fis = new FileInputStream(plainFilePath);
+            FileOutputStream fos = new FileOutputStream(secretFilePath)) {
+            fos.write(iv);
+            try (CipherOutputStream cos = new CipherOutputStream(fos, cipher)) {
+                byte[] buffer = new byte[8192];
+                int count;
+                while ((count = fis.read(buffer)) != -1) {
+                    cos.write(buffer, 0, count);
                 }
             }
         }
     }
 
     /**
-     * 解密文件
+     * 解密文件（流式，不把整个文件读进内存）
      * 
      * @param key 密钥
      * @param plainFilePath 明文文件路径路径
      * @param secretFilePath 密文文件路径
      */
     public static void decodeAESFile(byte[] key, String plainFilePath, String secretFilePath) throws Exception {
-        FileInputStream fis = null;
-        ByteArrayOutputStream bos = null;
-        FileOutputStream fos = null;
-        try {
-            fis = new FileInputStream(secretFilePath);
-            bos = new ByteArrayOutputStream(fis.available());
-
-            byte[] buffer = new byte[1024];
-            int count = 0;
-            while ((count = fis.read(buffer)) != -1) {
-                bos.write(buffer, 0, count);
+        SecretKey secretKey = normalizeKey(key);
+        try (FileInputStream fis = new FileInputStream(secretFilePath)) {
+            byte[] iv = new byte[BLOCK_SIZE];
+            if (fis.read(iv) != BLOCK_SIZE) {
+                throw new IllegalArgumentException("密文长度非法");
             }
-            bos.flush();
-
-            byte[] bytes = decodeAES(key, bos.toByteArray());
-
-            fos = new FileOutputStream(plainFilePath);
-            fos.write(bytes);
-            fos.flush();
-        } catch (Exception e) {
-            throw e;
-        } finally {
-            if (fis != null) {
-                try {
-                    fis.close();
-                } catch (Exception e) {
-                    e.getLocalizedMessage();
-                }
-            }
-            if (bos != null) {
-                try {
-                    bos.close();
-                } catch (Exception e) {
-                    e.getLocalizedMessage();
-                }
-            }
-            if (fos != null) {
-                try {
-                    fos.close();
-                } catch (Exception e) {
-                    e.getLocalizedMessage();
+            Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+            cipher.init(Cipher.DECRYPT_MODE, secretKey, new IvParameterSpec(iv));
+            try (CipherInputStream cis = new CipherInputStream(fis, cipher);
+                FileOutputStream fos = new FileOutputStream(plainFilePath)) {
+                byte[] buffer = new byte[8192];
+                int count;
+                while ((count = cis.read(buffer)) != -1) {
+                    fos.write(buffer, 0, count);
                 }
             }
         }

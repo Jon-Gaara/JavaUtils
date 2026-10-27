@@ -1,6 +1,5 @@
 package com.jon.file.resolve;
 
-import java.nio.charset.StandardCharsets;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -14,11 +13,12 @@ public class PropertiesUtils {
         try {
             Locale locale1 = new Locale("zh", "CN");
             ResourceBundle rs = ResourceBundle.getBundle("mail", locale1);
-            return new String(rs.getString(propertiesKey).getBytes(StandardCharsets.ISO_8859_1),
-                StandardCharsets.UTF_8);
+            // Java 9+ 默认按 UTF-8 读取 properties，ISO-8859-1 中转会把中文变成 '?'
+            return rs.getString(propertiesKey);
         } catch (Exception e) {
-            loggger.error(e.getMessage());
+            loggger.error("读取配置失败: " + propertiesKey, e);
+            // 返回 null 只会把 NPE 推迟到调用方，fail fast 保留真实原因
+            throw new IllegalStateException("缺少配置项或配置文件不可读: " + propertiesKey, e);
         }
-        return null;
     }
 }

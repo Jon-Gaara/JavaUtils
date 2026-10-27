@@ -52,6 +52,9 @@ public class JavaApiImageCompressUtil {
      * @param flag 缩放选择:true 放大; false 缩小;
      */
     public static void scale(String srcImageFile, String result, int scale, boolean flag, String format) {
+        if (scale <= 0) {
+            throw new IllegalArgumentException("缩放比例必须大于 0");
+        }
         try {
             BufferedImage src = ImageIO.read(new File(srcImageFile));
             int width = src.getWidth();
@@ -536,7 +539,8 @@ public class JavaApiImageCompressUtil {
             int bWideth = bSrc.getWidth(null);
             int bHeight = bSrc.getHeight(null);
             g.setComposite(AlphaComposite.getInstance(AlphaComposite.SRC_ATOP, alpha));
-            g.drawImage(bSrc, (wideth - bWideth) / 2, (height - bHeight) / 2, bWideth, bHeight, null);
+            // x/y 为水印位置的修正偏移（文档约定默认居中）
+            g.drawImage(bSrc, (wideth - bWideth) / 2 + x, (height - bHeight) / 2 + y, bWideth, bHeight, null);
             // 水印文件结束
             g.dispose();
             if (StringUtils.isBlank(format)) {
