@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -137,8 +138,12 @@ public class JavaApiSendHttpRequest {
             connection.setRequestMethod("POST");
             connection.setReadTimeout(READ_TIMEOUT);// 读操作超时
             connection.setConnectTimeout(CONNECTION_TIMEOUT);// 连接操作超时
-            connection.getOutputStream().write(Base64Encryption.decode(file, StandardCharsets.ISO_8859_1.name()).getBytes(StandardCharsets.ISO_8859_1));
-            connection.connect();
+            // getOutputStream() 本身就会建立连接，写入后必须 flush/close，否则大报文可能被截断
+            try (OutputStream output = connection.getOutputStream()) {
+                output.write(Base64Encryption.decode(file, StandardCharsets.ISO_8859_1.name())
+                    .getBytes(StandardCharsets.ISO_8859_1));
+                output.flush();
+            }
             InputStream is = connection.getInputStream();
             buffer = new BufferedReader(new InputStreamReader(is, StandardCharsets.UTF_8));
             String strRead;
@@ -179,6 +184,11 @@ public class JavaApiSendHttpRequest {
         try {
             for (int i = 1; i < asciis.length; i++) {
                 String code = asciis[i];
+                if (code.length() < 4) {
+                    // 截断的转义串，原样保留而不是抛 StringIndexOutOfBoundsException
+                    nativeValue.append(code);
+                    continue;
+                }
                 nativeValue.append((char) Integer.parseInt(code.substring(0, 4), 16));
                 if (code.length() > 4) {
                     nativeValue.append(code.substring(4));

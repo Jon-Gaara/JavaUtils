@@ -24,17 +24,22 @@ public class JacksonUtil {
         objectMapper = new ObjectMapper();
         // jsonGenerator = objectMapper.getFactory().createGenerator(out,JsonEncoding.UTF8);
         jsonGenerator = objectMapper.getFactory().createGenerator(sWriter);
+        // 多次复用同一 generator 时，默认会在顶层值之间写一个空格分隔符
+        jsonGenerator.setRootValueSeparator(null);
         SimpleDateFormat simple = new SimpleDateFormat(dateFormat);
 		//自定义日期形式
         objectMapper.setDateFormat(simple);
     }
 
     public String writeJsonObjectMessageForJsonGenerator(Object date) throws IOException {
+        sWriter.getBuffer().setLength(0);
         jsonGenerator.writeObject(date);
+        jsonGenerator.flush();
         return sWriter.toString();
     }
 
     public String writeJsonObjectMessageForJsonGenerator(Map<String, Object> data) throws IOException {
+        sWriter.getBuffer().setLength(0);
         jsonGenerator.writeStartObject();
         for (Map.Entry<String, Object> map : data.entrySet()) {
             jsonGenerator.writeObjectField(map.getKey(), map.getValue());
@@ -45,6 +50,7 @@ public class JacksonUtil {
     }
 
     public String writeJsonArrayMessageForJsonGenerator(List<Map<String, Object>> dataList) throws IOException {
+        sWriter.getBuffer().setLength(0);
         jsonGenerator.writeStartArray();
         for (Map<String, Object> data : dataList) {
             jsonGenerator.writeStartObject();
@@ -59,6 +65,7 @@ public class JacksonUtil {
     }
 
     public String writeJsonObjectMessageForObjectMapper(Object date) throws IOException {
+        sWriter.getBuffer().setLength(0);
         objectMapper.writeValue(sWriter, date);
         return sWriter.toString();
     }
@@ -70,6 +77,7 @@ public class JacksonUtil {
     }
 
     public String JavaBeanToXML(Object obj) throws IOException {
+        sWriter.getBuffer().setLength(0);
         XmlMapper xml = new XmlMapper();
         xml.writeValue(sWriter, obj);
         return sWriter.toString();

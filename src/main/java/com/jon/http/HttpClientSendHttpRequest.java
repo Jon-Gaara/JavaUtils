@@ -114,7 +114,7 @@ public class HttpClientSendHttpRequest {
         // 設置httpGet的头部參數信息
         // httpPost.setHeader(arg0);
         // httpPost.setHeader("apikey","<your-api-key>");
-        httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+        // 不手动设置 Content-Type，让 StringEntity 自带 application/json 生效
         httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
         String entityStr = "";
         try {
@@ -208,7 +208,7 @@ public class HttpClientSendHttpRequest {
         CloseableHttpClient httpClient = HttpClients.createDefault();
         try {
             HttpPost httpPost = new HttpPost(url);
-            httpPost.setHeader(new BasicHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8"));
+            // 不手动设置 Content-Type，multipart 请求必须由 MultipartEntityBuilder 生成带 boundary 的头
             httpPost.setHeader(new BasicHeader("Accept", "text/plain;charset=utf-8"));
             MultipartEntityBuilder muitipart = MultipartEntityBuilder.create();
 

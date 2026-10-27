@@ -23,6 +23,11 @@ public class QRCodeDecoderHandler {
         String decodedData = null;
         try {
             bufImg = ImageIO.read(imageFile);
+            if (bufImg == null) {
+                // 文件缺失/损坏/格式不支持时 ImageIO.read 返回 null，直接进解码会 NPE
+                System.out.println("Error: unable to decode image file " + imgPath);
+                return null;
+            }
             QRCodeDecoder decoder = new QRCodeDecoder();
             decodedData = new String(decoder.decode(new J2SEImage(bufImg)), characterEncoding);
         } catch (IOException | DecodingFailedException e) {

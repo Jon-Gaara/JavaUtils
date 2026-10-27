@@ -96,9 +96,10 @@ public class JavaApiImageCompressUtil {
             rendImage = ImageIO.read(new File(srcImageFile));
             ImageWriter imgWriter;
             if (StringUtils.isBlank(format)) {
-                imgWriter = ImageIO.getImageWritersByFormatName(format).next();
-            } else {
+                // 默认输出 JPEG
                 imgWriter = ImageIO.getImageWritersByFormatName("jpg").next();
+            } else {
+                imgWriter = ImageIO.getImageWritersByFormatName(format).next();
             }
             // 准备输出文件
             ImageOutputStream ios = ImageIO.createImageOutputStream(new File(result));
@@ -163,11 +164,12 @@ public class JavaApiImageCompressUtil {
                 itemp = image;
             }
             // ImageIO.write((BufferedImage) itemp, "JPEG", new File(result));
+            BufferedImage resultImage = toBufferedImage(itemp);
             ByteArrayOutputStream out = new ByteArrayOutputStream();
             if (StringUtils.isBlank(format)) {
-                ImageIO.write((BufferedImage)itemp, "JPEG", out);
+                ImageIO.write(resultImage, "JPEG", out);
             } else {
-                ImageIO.write((BufferedImage)itemp, format, out);
+                ImageIO.write(resultImage, format, out);
             }
             return out.toByteArray();
         } catch (IOException e) {
@@ -219,14 +221,30 @@ public class JavaApiImageCompressUtil {
                 itemp = image;
             }
 
+            BufferedImage resultImage = toBufferedImage(itemp);
             if (StringUtils.isBlank(format)) {
-                ImageIO.write((BufferedImage)itemp, "JPEG", new File(result));
+                ImageIO.write(resultImage, "JPEG", new File(result));
             } else {
-                ImageIO.write((BufferedImage)itemp, format, new File(result));
+                ImageIO.write(resultImage, format, new File(result));
             }
         } catch (IOException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * getScaledInstance 返回的 Image 不一定是 BufferedImage，直接强转会抛 ClassCastException
+     */
+    private static BufferedImage toBufferedImage(Image image) {
+        if (image instanceof BufferedImage) {
+            return (BufferedImage)image;
+        }
+        BufferedImage buffered = new BufferedImage(image.getWidth(null), image.getHeight(null),
+            BufferedImage.TYPE_INT_RGB);
+        Graphics2D g = buffered.createGraphics();
+        g.drawImage(image, 0, 0, null);
+        g.dispose();
+        return buffered;
     }
 
     /**
@@ -244,9 +262,9 @@ public class JavaApiImageCompressUtil {
             // 读取源图像
             BufferedImage bi = ImageIO.read(new File(srcImageFile));
             // 源图宽度
-            int srcWidth = bi.getHeight();
+            int srcWidth = bi.getWidth();
             // 源图高度
-            int srcHeight = bi.getWidth();
+            int srcHeight = bi.getHeight();
             if (srcWidth > 0 && srcHeight > 0) {
                 Image image = bi.getScaledInstance(srcWidth, srcHeight, Image.SCALE_DEFAULT);
                 // 四个参数分别为图像起点坐标和宽高
@@ -292,9 +310,9 @@ public class JavaApiImageCompressUtil {
             // 读取源图像
             BufferedImage bi = ImageIO.read(new File(srcImageFile));
             // 源图宽度
-            int srcWidth = bi.getHeight();
+            int srcWidth = bi.getWidth();
             // 源图高度
-            int srcHeight = bi.getWidth();
+            int srcHeight = bi.getHeight();
             if (srcWidth > 0 && srcHeight > 0) {
                 Image img;
                 ImageFilter cropFilter;
@@ -312,7 +330,7 @@ public class JavaApiImageCompressUtil {
                 if (srcHeight % rows == 0) {
                     destHeight = srcHeight / rows;
                 } else {
-                    destHeight = (int)Math.floor((double)srcWidth / rows) + 1;
+                    destHeight = (int)Math.floor((double)srcHeight / rows) + 1;
                 }
                 // 循环建立切片
                 // 改进的想法:是否可用多线程加快切割速度
@@ -363,9 +381,9 @@ public class JavaApiImageCompressUtil {
             // 读取源图像
             BufferedImage bi = ImageIO.read(new File(srcImageFile));
             // 源图宽度
-            int srcWidth = bi.getHeight();
+            int srcWidth = bi.getWidth();
             // 源图高度
-            int srcHeight = bi.getWidth();
+            int srcHeight = bi.getHeight();
             if (srcWidth > destWidth && srcHeight > destHeight) {
                 Image img;
                 ImageFilter cropFilter;

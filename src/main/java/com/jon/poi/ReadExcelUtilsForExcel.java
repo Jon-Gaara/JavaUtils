@@ -77,8 +77,14 @@ public class ReadExcelUtilsForExcel {
 			switch (cell.getCellType()){
 			// 如果当前Cell的Type为NUMERIC
 			case NUMERIC:
-				BigDecimal db = new BigDecimal(String.valueOf(cell.getNumericCellValue()));// 避免精度问题，先转成字符串
-				cellvalue = db.toPlainString();
+				// 日期单元格在 POI 里同样是 NUMERIC，只是带日期格式
+				if (DateUtil.isCellDateFormatted(cell)) {
+					SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+					cellvalue = sdf.format(cell.getDateCellValue());
+				} else {
+					BigDecimal db = new BigDecimal(String.valueOf(cell.getNumericCellValue()));// 避免精度问题，先转成字符串
+					cellvalue = db.toPlainString();
+				}
 				break;
 			case FORMULA:{
 				// 判断当前的cell是否为Date

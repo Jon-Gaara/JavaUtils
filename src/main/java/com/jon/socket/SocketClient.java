@@ -28,14 +28,16 @@ public class SocketClient {
                     info = dataInput.readUTF();
                     System.out.println("服务器 :" + info);
                     if ("bye".equals(info)) {
-                        System.out.println("对方下线，程序退出!");
-                        System.exit(0);
+                        System.out.println("对方下线");
+                        break;
                     }
                 }
             } catch (IOException e) {
-                if (e.toString().contains("java.net.SocketException: Connection reset")) {
-                    System.out.println("服务器连接中断!");
-                    System.exit(0);
+                System.out.println("服务器连接中断: " + e.getMessage());
+            } finally {
+                try {
+                    dataInput.close();
+                } catch (IOException ignored) {
                 }
             }
         }
@@ -56,15 +58,20 @@ public class SocketClient {
                 BufferedReader br = new BufferedReader(isr);
                 while (true) {
                     String thisInfo = br.readLine();
-                    if ("bye".equals(thisInfo) || thisInfo == null) {
-                        System.out.println("对方下线，程序退出!");
-                        System.exit(0);
+                    if (thisInfo == null || "bye".equals(thisInfo)) {
+                        System.out.println("对方下线");
+                        break;
                     }
                     System.out.println(thisInfo);
                     data.writeUTF(thisInfo);
                 }
             } catch (IOException e) {
-                e.printStackTrace();
+                System.out.println("本端写线程结束: " + e.getMessage());
+            } finally {
+                try {
+                    data.close();
+                } catch (IOException ignored) {
+                }
             }
         }
     }

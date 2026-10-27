@@ -45,13 +45,9 @@ public class SetExcelValue {
     }
 
     /**
-     * 根据类型来赋值，数据格式化
-     * 
-     * @param cell
-     * @param type
-     * @param value
+     * 根据类型来赋值，数据格式化（唯一入口，明细行与合计行共用同一套格式化逻辑）
      */
-    private static void setValueByType(Cell cell, CellTypeEnum type, Object value) {
+    public static void setValueByType(Cell cell, CellTypeEnum type, Object value) {
         switch (type) {
             case Money:
                 // 金额数值统一做除100处理
@@ -87,15 +83,7 @@ public class SetExcelValue {
     public static void setValueAndStyleByType(CellStyleControl styleFactory, Cell cell, CellTypeEnum type, Object value,
         CellStyle cellStyle) {
         cell.setCellStyle(styleFactory.getStyleByType(type, cellStyle));
-        switch (type) {
-            case Money:
-                cell.setCellValue(Double.parseDouble(value.toString()));
-                break;
-            case Percent:
-                cell.setCellValue(Double.parseDouble(value.toString()));
-                break;
-            default:
-                cell.setCellValue(value.toString());
-        }
+        // 与明细行共用同一套格式化（金额除100、日期写 Date 值），避免合计行差 100 倍
+        setValueByType(cell, type, value);
     }
 }

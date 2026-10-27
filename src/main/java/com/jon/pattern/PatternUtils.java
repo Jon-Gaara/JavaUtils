@@ -61,10 +61,19 @@ public class PatternUtils {
         if (idCard.length() == 15) {
             return true;
         }
+        // 只有 18 位身份证才有校验位，其他长度直接判定非法（否则会数组越界/数字转换异常）
+        if (idCard.length() != 18) {
+            return false;
+        }
         String[] idCardStrArray = idCard.split("");
         int idCardArray = 0;
-        for (int i = 0, k = idCardStrArray.length - 1; i < k; i++) {
-			idCardArray += Integer.parseInt(idCardStrArray[i]) * weightFactor[i];
+        try {
+            for (int i = 0, k = idCardStrArray.length - 1; i < k; i++) {
+                idCardArray += Integer.parseInt(idCardStrArray[i]) * weightFactor[i];
+            }
+        } catch (NumberFormatException e) {
+            // 含非数字字符
+            return false;
         }
         int last = idCardArray % 11;
         String checkCode = verify[last];

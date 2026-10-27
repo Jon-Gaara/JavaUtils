@@ -42,7 +42,8 @@ public class ThumbnailatorImageCompressUtil {
 	 * 若png、gif格式图片中含有透明背景，使用该工具压缩处理后背景会变成黑色.,,,,1
 	 */
 	public static void imageScale(File file, double quality, String fileType, String filePath) throws IOException {
-		if (StringUtils.isNotBlank(fileType)) {
+		if (StringUtils.isBlank(fileType)) {
+			// fileType 为空时沿用文件扩展名推断（jpg 默认 JPEG）
 			Thumbnails.of(file).scale(1f).outputQuality(quality).toFile(filePath);
 		} else {
 			Thumbnails.of(file).scale(1f).outputQuality(quality).outputFormat(fileType).toFile(filePath);
@@ -55,9 +56,9 @@ public class ThumbnailatorImageCompressUtil {
 	public static void imageScaleForSize(File file, int width, int height, String fileType, String filePath)
 			throws IOException {
 		if (StringUtils.isBlank(fileType)) {
-			Thumbnails.of(file).forceSize(width, height).outputFormat(fileType).toFile(filePath);
-		} else {
 			Thumbnails.of(file).forceSize(width, height).toFile(filePath);
+		} else {
+			Thumbnails.of(file).forceSize(width, height).outputFormat(fileType).toFile(filePath);
 		}
 	}
 

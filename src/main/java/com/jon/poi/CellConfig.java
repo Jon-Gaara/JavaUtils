@@ -18,6 +18,8 @@ public class CellConfig {
         super();
         this.colName = colName;
 		this.fieldName = fieldName;
+		// 默认按字符串处理，避免导出时 getCellType() 为 null 触发 NPE
+        this.cellType = CellTypeEnum.String;
     }
 
     /**

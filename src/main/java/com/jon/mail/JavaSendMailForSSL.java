@@ -1,7 +1,6 @@
 package com.jon.mail;
 
 import java.io.File;
-import java.security.Security;
 import java.util.Date;
 import java.util.Properties;
 
@@ -45,9 +44,7 @@ public class JavaSendMailForSSL {
 
     public JavaSendMailForSSL() {}
 
-    @SuppressWarnings("restriction")
     public static void sendMail(String subject, String body, File[] attachment, File[] fileImage) {
-        Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
         Properties prop = System.getProperties();
         prop.setProperty("mail.smtp.host", SMTP_HOST_NAME);
         prop.setProperty("mail.smtp.socketFactory.class", SSL_FACTORY);
