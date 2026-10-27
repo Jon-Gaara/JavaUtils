@@ -63,7 +63,6 @@ public class Dom4jUtils {
 		// 添加CDATA区域
         node.addCDATA("ASDASD");
         this.listNodes(node);
-        writer(document);
     }
 
     /**
@@ -96,25 +95,26 @@ public class Dom4jUtils {
     /**
      * 把document对象写入新的文件
      * 
-     * @param document
+     * @param document document 对象
+     * @param filePath 输出文件路径（原实现硬编码 d:/a.xml，非 Windows 环境必然失败）
      * @throws Exception
      */
-    public void writer(Document document) throws Exception {
+    public void writer(Document document, String filePath) throws Exception {
         // 紧凑的格式
         // OutputFormat format = OutputFormat.createCompactFormat();
         // 排版缩进的格式
         OutputFormat format = OutputFormat.createPrettyPrint();
         // 设置编码
         format.setEncoding("UTF-8");
-        // 创建XMLWriter对象,指定了写出文件及编码格式
-        // XMLWriter writer = new XMLWriter(new FileWriter(new File("d:/a.xml")),format);
-        XMLWriter writer =
-            new XMLWriter(new OutputStreamWriter(new FileOutputStream(new File("d:/a.xml")), StandardCharsets.UTF_8), format);
-
-        writer.write(document);
-        writer.flush();
-        // 关闭操作
-        writer.close();
+        OutputStreamWriter out =
+            new OutputStreamWriter(new FileOutputStream(new File(filePath)), StandardCharsets.UTF_8);
+        XMLWriter writer = new XMLWriter(out, format);
+        try {
+            writer.write(document);
+            writer.flush();
+        } finally {
+            writer.close();
+        }
     }
 
     public static void main(String[] args) throws Exception {

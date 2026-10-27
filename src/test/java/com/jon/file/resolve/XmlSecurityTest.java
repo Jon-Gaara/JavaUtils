@@ -42,6 +42,17 @@ public class XmlSecurityTest {
     }
 
     @Test
+    public void dom4jWritesToExplicitPath() throws Exception {
+        // 原实现写死 d:/a.xml，非 Windows 环境必然失败
+        Dom4jUtils utils = new Dom4jUtils();
+        utils.getXMLDocument(NORMAL_XML);
+        File out = folder.newFile("out.xml");
+        utils.writer(utils.getDocument(), out.getPath());
+        assertTrue("written file should contain root element", new String(
+            java.nio.file.Files.readAllBytes(out.toPath()), "UTF-8").contains("<root>"));
+    }
+
+    @Test
     public void dom4jRejectsXxe() throws Exception {
         File payload = folder.newFile("xxe.xml");
         try (FileWriter w = new FileWriter(payload)) {
