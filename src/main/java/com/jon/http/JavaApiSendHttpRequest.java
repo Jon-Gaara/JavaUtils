@@ -13,9 +13,9 @@ import java.nio.charset.StandardCharsets;
 import java.util.List;
 import java.util.Map;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.jon.encryption.Base64Encryption;
-
-import net.sf.json.JSONObject;
 
 /**
  * Java自带Api发送HTTP请求
@@ -201,36 +201,35 @@ public class JavaApiSendHttpRequest {
     }
 
     public static String parseJson(String url) {
-        JSONObject jsonObject = JSONObject.fromObject(url);
         StringBuilder nowWeather = new StringBuilder();
-        if (jsonObject != null && jsonObject.size() != 0) {
-            Integer errNum = (Integer)jsonObject.get("errNum");
-            String errMsg = jsonObject.getString("errMsg");
+        try {
+            JsonNode jsonObject = new ObjectMapper().readTree(url);
+            if (jsonObject == null || jsonObject.size() == 0) {
+                return nowWeather.toString();
+            }
+            int errNum = jsonObject.path("errNum").asInt(-1);
+            String errMsg = jsonObject.path("errMsg").asText("");
             System.out.println(errMsg);
             if (errNum == 0) {
-                JSONObject retData = jsonObject.getJSONObject("retData");
-                String city = (String)retData.get("city");
-                // String pinyin = (String) retData.get("pinyin");
-                // String citycode = (String) retData.get("citycode");
-                String date = (String)retData.get("date");
-                String time = (String)retData.get("time");
-                // String postCode = (String) retData.get("postCode");
-                // String longitude =String.valueOf((Double) retData.get("longitude"));
-                // String latitude = String.valueOf((Double) retData.get("latitude"));
-                // String altitude = (String) retData.get("altitude");
-                String weather = (String)retData.get("weather");
-                String temp = (String)retData.get("temp");
-                String l_tmp = (String)retData.get("l_tmp");
-                String h_tmp = (String)retData.get("h_tmp");
-                String WD = (String)retData.get("WD");
-                String WS = (String)retData.get("WS");
-                String sunrise = (String)retData.get("sunrise");
-                String sunset = (String)retData.get("sunset");
+                JsonNode retData = jsonObject.path("retData");
+                String city = retData.path("city").asText("");
+                String date = retData.path("date").asText("");
+                String time = retData.path("time").asText("");
+                String weather = retData.path("weather").asText("");
+                String temp = retData.path("temp").asText("");
+                String l_tmp = retData.path("l_tmp").asText("");
+                String h_tmp = retData.path("h_tmp").asText("");
+                String WD = retData.path("WD").asText("");
+                String WS = retData.path("WS").asText("");
+                String sunrise = retData.path("sunrise").asText("");
+                String sunset = retData.path("sunset").asText("");
                 nowWeather.append("城市:" + city + " 发布日期:" + date + " " + time + " 天气情况 :" + weather + " 气温 ：")
                     .append(temp + " 最低气温:" + l_tmp + " 最高气温:" + h_tmp + " 风向:" + WD + " 风力：" + WS + " 日出时间:" + sunrise
                         + " 日落时间:" + sunset);
                 System.out.println(nowWeather);
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return nowWeather.toString();
     }

@@ -1,51 +1,48 @@
 package com.jon.json;
 
-import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.util.Locale;
 
-import net.sf.json.JSONArray;
-import net.sf.json.JSONObject;
-import net.sf.json.JsonConfig;
-import net.sf.json.processors.DefaultValueProcessor;
-import net.sf.json.util.CycleDetectionStrategy;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 /**
- * http://www.cnblogs.com/az19870227/archive/2011/09/19/2180993.html
+ * Java 对象转 JSON（由 json-lib 迁移到 Jackson）。
  * 
  * @author yumaolin
  */
-
 public class JsonUtil {
+
+    private static ObjectMapper createMapper(String dateFormat) {
+        ObjectMapper mapper = new ObjectMapper();
+        if (dateFormat != null && !dateFormat.isEmpty()) {
+            mapper.setDateFormat(new SimpleDateFormat(dateFormat, Locale.CHINESE));
+        }
+        // 空 bean 序列化为 {} 而不是抛异常，保持原 json-lib 行为
+        mapper.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+        mapper.disable(SerializationFeature.FAIL_ON_SELF_REFERENCES);
+        return mapper;
+    }
 
     /**
      * Java bean转Json,格式化Date对象
      */
     public static String writeJsonObjectMessage(Object obj, String dateFormat) {
-        JsonConfig config = new JsonConfig();
-        config.setIgnoreDefaultExcludes(false);
-        config.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
-        // 当输出时间格式时，采用和JS兼容的格式输出
-        // config.registerJsonBeanProcessor(Date.class, new JsDateJsonBeanProcessor());
-		// 自定义时间格式
-        config.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor(dateFormat));
-        JSONObject jsonObject = JSONObject.fromObject(obj, config);
-        return jsonObject.toString();
+        try {
+            return createMapper(dateFormat).writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new IllegalStateException("JSON 序列化失败", e);
+        }
     }
 
     /**
-     * List 转Json,转Json,格式化Date对象
+     * List 转Json,格式化Date对象
      */
-    @SuppressWarnings("rawtypes")
     public static String writeJsonArrayMessage(Object obj, String dateFormat) {
-        JsonConfig config = new JsonConfig();
-		// 默认为false，即过滤默认的key
-        config.setIgnoreDefaultExcludes(false);
-        config.setCycleDetectionStrategy(CycleDetectionStrategy.LENIENT);
-		// 当输出时间格式时，采用和JS兼容的格式输出
-        // config.registerJsonBeanProcessor(Date.class, new JsDateJsonBeanProcessor());
-        config.registerJsonValueProcessor(Date.class, new JsonDateValueProcessor(dateFormat));
-        // 处理Integer为null时输出为0的问题
-        config.registerDefaultValueProcessor(Integer.class, type -> null);
-        JSONArray jsonObject = JSONArray.fromObject(obj, config);
-        return jsonObject.toString();
+        try {
+            return createMapper(dateFormat).writeValueAsString(obj);
+        } catch (Exception e) {
+            throw new IllegalStateException("JSON 序列化失败", e);
+        }
     }
 }

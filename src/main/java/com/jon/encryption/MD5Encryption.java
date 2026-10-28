@@ -1,7 +1,7 @@
 package com.jon.encryption;
 
 import java.security.MessageDigest;
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 public class MD5Encryption {
     private static final String format = "utf-8";

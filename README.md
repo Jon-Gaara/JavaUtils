@@ -61,7 +61,7 @@ byte[] bytes = MyProxyFactory.createProxyClass("TestProxy", new Class[]{MyInterf
 | 图片处理 | `com.jon.image` | 格式转换、图片压缩（JDK 原生 / Thumbnailator） |
 | 网络 | `com.jon.http`、`com.jon.socket` | HTTP 请求封装、Socket 通信 |
 | FTP | `com.jon.ftp` | FTP / SFTP 客户端 |
-| JSON | `com.jon.json` | Jackson / Json-lib 封装与日期处理 |
+| JSON | `com.jon.json` | Jackson 封装与日期处理 |
 | 邮件 | `com.jon.mail` | SSL / 非 SSL 邮件发送 |
 | 数据库 | `com.jon.jdbc` | JDBC 工具封装 |
 | 正则 | `com.jon.pattern` | 正则匹配工具 |

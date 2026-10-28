@@ -2,7 +2,7 @@ package com.jon.pattern;
 
 import java.util.regex.Pattern;
 
-import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 正则表达式
